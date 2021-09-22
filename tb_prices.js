@@ -255,6 +255,7 @@ async function request_history_price(share_url) {
 
     const rid = new Promise(function (resolve, reject) {
         options.url = "https://app.bijiago.com/service/product?app_platform=ios&app_version=65&device=750%2A1334&opt=product&posi=default&url=" + encodeURIComponent(share_url);
+        console.log(`淘宝比较url：'${url}'`);
         $tool.get(options, function (error, response, data) {
             if (!error) {
                 resolve(JSON.parse(data))
