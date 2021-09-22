@@ -1,5 +1,5 @@
 /*
-Version: 1.0.2
+Version: 1.0.3
  */
 
 const $tool = new Tool()
@@ -64,6 +64,7 @@ if (url.indexOf(path2) != -1) {
             msg = "暂无价格信息"
         })
         .finally(() => {
+            console.log(`obj -> '${obj}'`);
             if (obj.data.apiStack) {
                 let apiStack = obj.data.apiStack[0]
                 let value = JSON.parse(apiStack.value)
@@ -83,6 +84,7 @@ if (url.indexOf(path2) != -1) {
                     vertical = value.vertical
                 }
                 if (trade && trade.useWap == "true") {
+                    console.log(`run 1`);
                     sendNotify(msg)
                 } else {
                     if (vertical && vertical.hasOwnProperty("tmallhkDirectSale")) {
@@ -95,8 +97,10 @@ if (url.indexOf(path2) != -1) {
                     apiStack.value = JSON.stringify(value)
                 }
             } else {
+                console.log(`run 2`);
                 sendNotify(msg)
             }
+            console.log(`run 3`);
             $done({ body: JSON.stringify(obj) })
         })
 }
@@ -255,7 +259,7 @@ async function request_history_price(share_url) {
 
     const rid = new Promise(function (resolve, reject) {
         options.url = "https://app.bijiago.com/service/product?app_platform=ios&app_version=65&device=750%2A1334&opt=product&posi=default&url=" + encodeURIComponent(share_url);
-        console.log(`淘宝比较url：'${options.url}', '${share_url}'`);
+        // console.log(`淘宝比较url：'${options.url}', '${share_url}'`);
         $tool.get(options, function (error, response, data) {
             if (!error) {
                 resolve(JSON.parse(data))
