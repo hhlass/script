@@ -1,5 +1,5 @@
 /*
-Version: 1.0.3
+Version: 1.0.4
  */
 
 const $tool = new Tool()
@@ -64,7 +64,7 @@ if (url.indexOf(path2) != -1) {
             msg = "暂无价格信息"
         })
         .finally(() => {
-            console.log(`obj -> '${obj}'`);
+            console.log(`body -> '${body}', data -> '${obj.data}'`);
             if (obj.data.apiStack) {
                 let apiStack = obj.data.apiStack[0]
                 let value = JSON.parse(apiStack.value)
