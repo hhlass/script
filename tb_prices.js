@@ -1,5 +1,5 @@
 /*
-Version: 1.0.4
+Version: 1.0.5
  */
 
 const $tool = new Tool()
@@ -83,24 +83,28 @@ if (url.indexOf(path2) != -1) {
                     trade = value.trade
                     vertical = value.vertical
                 }
+                console.log(`${tradeConsumerProtection} -- ${consumerProtection} -- ${trade} -- ${vertical}`);
                 if (trade && trade.useWap == "true") {
                     console.log(`run 1`);
                     sendNotify(msg)
                 } else {
                     if (vertical && vertical.hasOwnProperty("tmallhkDirectSale")) {
+                        console.log(`run 4 -- ${msg}`);
                         sendNotify(msg)
                     } else if (tradeConsumerProtection) {
+                        console.log(`run 5  -- ${tradeConsumerProtection}`);
                         tradeConsumerProtection = setTradeConsumerProtection(msg, tradeConsumerProtection)
                     } else {
+                        console.log(`run 6  -- ${consumerProtection}`);
                         consumerProtection = setConsumerProtection(msg, consumerProtection)
                     }
                     apiStack.value = JSON.stringify(value)
                 }
             } else {
-                console.log(`run 2`);
+                console.log(`run 2 -- ${msg}`);
                 sendNotify(msg)
             }
-            console.log(`run 3`);
+            console.log(`run 3 -- ${msg}`);
             $done({ body: JSON.stringify(obj) })
         })
 }
