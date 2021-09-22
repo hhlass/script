@@ -59,7 +59,10 @@ if (url.indexOf(path2) != -1) {
             msg = data
             if (msg.priceTrend.series.length == 0) throw new Error('Whoops!')
         })
-        .catch(error => msg = "暂无价格信息")
+        .catch(error => {
+            console.log(`淘宝比较错误信息-> ${error}`);
+            msg = "暂无价格信息"
+        })
         .finally(() => {
             if (obj.data.apiStack) {
                 let apiStack = obj.data.apiStack[0]
