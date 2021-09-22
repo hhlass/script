@@ -1,5 +1,5 @@
 /*
-Version: 1.0.1
+Version: 1.0.2
  */
 
 const $tool = new Tool()
@@ -57,7 +57,7 @@ if (url.indexOf(path2) != -1) {
     request_history_price(shareUrl)
         .then(data => {
             msg = data
-            if (msg.priceTrend.series.length == 0) throw new Error('Whoops!')
+            // if (msg.priceTrend.series.length == 0) throw new Error('Whoops!')
         })
         .catch(error => {
             console.log(`淘宝比较错误信息-> ${error}`);
