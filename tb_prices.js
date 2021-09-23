@@ -1,5 +1,5 @@
 /*
-Version: 1.0.11
+Version: 1.0.12
  */
 
 const $tool = new Tool()
@@ -96,13 +96,13 @@ if (url.indexOf(path2) != -1) {
                     } else {
                         console.log(`run 7`);
                         if (vertical && vertical.hasOwnProperty("tmallhkDirectSale")) {
-                            console.log(`run 4 -- ${msg}`);
+                            console.log(`run 4`);
                             sendNotify(msg)
                         } else if (tradeConsumerProtection) {
-                            console.log(`run 5  -- ${JSON.parse(msg)} -- ${JSON.parse(tradeConsumerProtection)}`);
+                            console.log(`run 5 `);
                             tradeConsumerProtection = setTradeConsumerProtection(msg, tradeConsumerProtection)
                         } else {
-                            console.log(`run 6  -- ${JSON.parse(msg)} -- ${JSON.parse(consumerProtection)}`);
+                            console.log(`run 6`);
                             consumerProtection = setConsumerProtection(msg, consumerProtection)
                         }
                         apiStack.value = JSON.stringify(value)
