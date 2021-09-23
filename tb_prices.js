@@ -1,5 +1,5 @@
 /*
-Version: 1.0.14
+Version: 1.0.15
  */
 
 const $tool = new Tool()
@@ -72,6 +72,7 @@ if (url.indexOf(path2) != -1) {
             if (obj.data.apiStack) {
                 let apiStack = obj.data.apiStack[0]
                 let value = JSON.parse(apiStack.value)
+                console.log(`value -> '${value}'`);
                 let tradeConsumerProtection = null
                 let consumerProtection = null
                 let trade = null
@@ -99,7 +100,7 @@ if (url.indexOf(path2) != -1) {
                             console.log(`run 4`);
                             sendNotify(msg)
                         } else if (tradeConsumerProtection) {
-                            console.log(`run 5 `);
+                            console.log(`run 5 ${JSON.parse(tradeConsumerProtection)}`);
                             tradeConsumerProtection = setTradeConsumerProtection(msg, tradeConsumerProtection)
                         } else {
                             console.log(`run 6`);
