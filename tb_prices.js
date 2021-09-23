@@ -1,5 +1,5 @@
 /*
-Version: 1.0.12
+Version: 1.0.13
  */
 
 const $tool = new Tool()
@@ -161,6 +161,7 @@ function setTradeConsumerProtection(data, tradeConsumerProtection) {
 }
 
 function priceSummary(data) {
+    console.log(`tb-data -> ${data} ${JSON.parse(data)}`);
     data = data.series[0]
     let summary = `当前: ${parseFloat(data.current / 100.0)}${getSpace(4)}最低: ${parseFloat(data.min / 100.0)}${getSpace(4)}最高: ${parseFloat(data.max / 100.0)}`
     let tbitems = [customItem(summary)]
