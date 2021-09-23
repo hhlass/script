@@ -1,5 +1,5 @@
 /*
-Version: 1.0.9
+Version: 1.0.10
  */
 
 const $tool = new Tool()
@@ -59,7 +59,7 @@ if (url.indexOf(path2) != -1) {
     request_history_price(shareUrl)
         .then(data => {
             msg = data
-            console.log(`淘宝比价获取到比较信息 -- ${JSON.parse(msg)}`);
+            // console.log(`淘宝比价获取到比较信息 -- ${JSON.parse(msg)}`);
             // if (msg.priceTrend.series.length == 0) throw new Error('Whoops!')
         })
         .catch(error => {
@@ -93,6 +93,7 @@ if (url.indexOf(path2) != -1) {
                     console.log(`run 1`);
                     sendNotify(msg)
                 } else {
+                    console.log(`run 7`);
                     if (vertical && vertical.hasOwnProperty("tmallhkDirectSale")) {
                         console.log(`run 4 -- ${msg}`);
                         sendNotify(msg)
