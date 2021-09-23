@@ -1,5 +1,5 @@
 /*
-Version: 1.0.5
+Version: 1.0.6
  */
 
 const $tool = new Tool()
@@ -95,7 +95,7 @@ if (url.indexOf(path2) != -1) {
                         console.log(`run 5  -- ${tradeConsumerProtection}`);
                         tradeConsumerProtection = setTradeConsumerProtection(msg, tradeConsumerProtection)
                     } else {
-                        console.log(`run 6  -- ${consumerProtection}`);
+                        console.log(`run 6  -- ${msg} -- ${consumerProtection}`);
                         consumerProtection = setConsumerProtection(msg, consumerProtection)
                     }
                     apiStack.value = JSON.stringify(value)
@@ -119,6 +119,7 @@ function sendNotify(data) {
 }
 
 function setConsumerProtection(data, consumerProtection) {
+    console.log(`consumer: ${JSON.parse(consumerProtection)}`);
     let basicService = consumerProtection.serviceProtection.basicService
     let items = consumerProtection.items
     if (typeof data == "string") {
