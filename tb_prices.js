@@ -1,5 +1,5 @@
 /*
-Version: 1.0.6
+Version: 1.0.7
  */
 
 const $tool = new Tool()
@@ -64,7 +64,7 @@ if (url.indexOf(path2) != -1) {
             msg = "暂无价格信息"
         })
         .finally(() => {
-            console.log(`body -> '${body}', data -> '${obj.data}'`);
+            // console.log(`body -> '${body}', data -> '${obj.data}'`);
             if (obj.data.apiStack) {
                 let apiStack = obj.data.apiStack[0]
                 let value = JSON.parse(apiStack.value)
@@ -83,7 +83,7 @@ if (url.indexOf(path2) != -1) {
                     trade = value.trade
                     vertical = value.vertical
                 }
-                console.log(`${tradeConsumerProtection} -- ${consumerProtection} -- ${trade} -- ${vertical}`);
+                // console.log(`${tradeConsumerProtection} -- ${consumerProtection} -- ${trade} -- ${vertical}`);
                 if (trade && trade.useWap == "true") {
                     console.log(`run 1`);
                     sendNotify(msg)
@@ -95,7 +95,7 @@ if (url.indexOf(path2) != -1) {
                         console.log(`run 5  -- ${tradeConsumerProtection}`);
                         tradeConsumerProtection = setTradeConsumerProtection(msg, tradeConsumerProtection)
                     } else {
-                        console.log(`run 6  -- ${msg} -- ${consumerProtection}`);
+                        console.log(`run 6  -- ${JSON.parse(msg)} -- ${JSON.parse(consumerProtection)}`);
                         consumerProtection = setConsumerProtection(msg, consumerProtection)
                     }
                     apiStack.value = JSON.stringify(value)
