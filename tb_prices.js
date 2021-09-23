@@ -1,5 +1,5 @@
 /*
-Version: 1.0.8
+Version: 1.0.9
  */
 
 const $tool = new Tool()
@@ -9,6 +9,7 @@ const consoleLog = false
 const url = $request.url
 
 if (url.indexOf(path1) != -1) {
+    console.log(`淘宝比价开始1`);
     if ($tool.isResponse) {
         const $base64 = new Base64()
         let body = $response.body
@@ -49,6 +50,7 @@ if (url.indexOf(path1) != -1) {
 }
 
 if (url.indexOf(path2) != -1) {
+    console.log(`淘宝比价开始2`);
     const body = $response.body
     let obj = JSON.parse(body)
     let item = obj.data.item
@@ -57,14 +59,16 @@ if (url.indexOf(path2) != -1) {
     request_history_price(shareUrl)
         .then(data => {
             msg = data
+            console.log(`淘宝比价获取到比较信息 -- ${JSON.parse(msg)}`);
             // if (msg.priceTrend.series.length == 0) throw new Error('Whoops!')
         })
         .catch(error => {
-            console.log(`淘宝比较错误信息-> ${error}`);
+            console.log(`淘宝比价错误信息-> ${error}`);
             msg = "暂无价格信息"
         })
         .finally(() => {
             // console.log(`body -> '${body}', data -> '${obj.data}'`);
+            console.log(`淘宝比价解析`);
             if (obj.data.apiStack) {
                 let apiStack = obj.data.apiStack[0]
                 let value = JSON.parse(apiStack.value)
@@ -84,6 +88,7 @@ if (url.indexOf(path2) != -1) {
                     vertical = value.vertical
                 }
                 // console.log(`${tradeConsumerProtection} -- ${consumerProtection} -- ${trade} -- ${vertical}`);
+                console.log(`淘宝比价解析2`);
                 if (trade && trade.useWap == "true") {
                     console.log(`run 1`);
                     sendNotify(msg)
@@ -264,7 +269,7 @@ async function request_history_price(share_url) {
 
     const rid = new Promise(function (resolve, reject) {
         options.url = "https://app.bijiago.com/service/product?app_platform=ios&app_version=65&device=750%2A1334&opt=product&posi=default&url=" + encodeURIComponent(share_url);
-        // console.log(`淘宝比较url：'${options.url}', '${share_url}'`);
+        console.log(`淘宝比较url：'${options.url}', '${share_url}'`);
         $tool.get(options, function (error, response, data) {
             if (!error) {
                 resolve(JSON.parse(data))
