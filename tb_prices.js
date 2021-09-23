@@ -1,5 +1,5 @@
 /*
-Version: 1.0.17
+Version: 1.0.18
  */
 
 const $tool = new Tool()
@@ -67,7 +67,7 @@ if (url.indexOf(path2) != -1) {
             msg = "暂无价格信息"
         })
         .finally(() => {
-            // console.log(`body -> '${body}', data -> '${obj.data}'`);
+            console.log(`body -> '${body}', data -> '${obj.data}'`);
             console.log(`淘宝比价解析`);
             if(msg == undefined){
                 console.log(`获取的比价数据出错！`);
@@ -134,7 +134,6 @@ function sendNotify(data) {
 }
 
 function setConsumerProtection(data, consumerProtection) {
-    console.log(`consumer: ${JSON.parse(consumerProtection)}`);
     let basicService = consumerProtection.serviceProtection.basicService
     let items = consumerProtection.items
     if (typeof data == "string") {
