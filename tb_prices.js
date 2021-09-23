@@ -1,5 +1,5 @@
 /*
-Version: 1.0.7
+Version: 1.0.8
  */
 
 const $tool = new Tool()
@@ -92,7 +92,7 @@ if (url.indexOf(path2) != -1) {
                         console.log(`run 4 -- ${msg}`);
                         sendNotify(msg)
                     } else if (tradeConsumerProtection) {
-                        console.log(`run 5  -- ${tradeConsumerProtection}`);
+                        console.log(`run 5  -- ${JSON.parse(msg)} -- ${JSON.parse(tradeConsumerProtection)}`);
                         tradeConsumerProtection = setTradeConsumerProtection(msg, tradeConsumerProtection)
                     } else {
                         console.log(`run 6  -- ${JSON.parse(msg)} -- ${JSON.parse(consumerProtection)}`);
