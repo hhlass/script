@@ -1,5 +1,5 @@
 /*
-Version: 1.0.16
+Version: 1.0.17
  */
 
 const $tool = new Tool()
@@ -69,6 +69,9 @@ if (url.indexOf(path2) != -1) {
         .finally(() => {
             // console.log(`body -> '${body}', data -> '${obj.data}'`);
             console.log(`淘宝比价解析`);
+            if(msg == undefined){
+                console.log(`获取的比价数据出错！`);
+            }
             if (obj.data.apiStack) {
                 let apiStack = obj.data.apiStack[0]
                 let value = JSON.parse(apiStack.value)
@@ -281,6 +284,7 @@ async function request_history_price(share_url) {
         console.log(`淘宝比较url：'${options.url}', '${share_url}'`);
         $tool.get(options, function (error, response, data) {
             if (!error) {
+                console.log(`bijiago -> ${JSON.parse(data)}`);
                 resolve(JSON.parse(data))
             } else {
                 console.log(`淘宝比价获取比价信息失败！error -> '${error}'`)
