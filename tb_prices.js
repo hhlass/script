@@ -1,5 +1,5 @@
 /*
-Version: 1.0.15
+Version: 1.0.16
  */
 
 const $tool = new Tool()
@@ -72,7 +72,7 @@ if (url.indexOf(path2) != -1) {
             if (obj.data.apiStack) {
                 let apiStack = obj.data.apiStack[0]
                 let value = JSON.parse(apiStack.value)
-                console.log(`value -> '${value}'`);
+                console.log(`value -> '${JSON.parse(value)}'`);
                 let tradeConsumerProtection = null
                 let consumerProtection = null
                 let trade = null
@@ -283,6 +283,7 @@ async function request_history_price(share_url) {
             if (!error) {
                 resolve(JSON.parse(data))
             } else {
+                console.log(`淘宝比价获取比价信息失败！error -> '${error}'`)
                 reject(error)
             }
         })
