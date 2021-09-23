@@ -1,5 +1,5 @@
 /*
-Version: 1.0.10
+Version: 1.0.11
  */
 
 const $tool = new Tool()
@@ -89,22 +89,27 @@ if (url.indexOf(path2) != -1) {
                 }
                 // console.log(`${tradeConsumerProtection} -- ${consumerProtection} -- ${trade} -- ${vertical}`);
                 console.log(`淘宝比价解析2`);
-                if (trade && trade.useWap == "true") {
-                    console.log(`run 1`);
-                    sendNotify(msg)
-                } else {
-                    console.log(`run 7`);
-                    if (vertical && vertical.hasOwnProperty("tmallhkDirectSale")) {
-                        console.log(`run 4 -- ${msg}`);
+                try {
+                    if (trade && trade.useWap == "true") {
+                        console.log(`run 1`);
                         sendNotify(msg)
-                    } else if (tradeConsumerProtection) {
-                        console.log(`run 5  -- ${JSON.parse(msg)} -- ${JSON.parse(tradeConsumerProtection)}`);
-                        tradeConsumerProtection = setTradeConsumerProtection(msg, tradeConsumerProtection)
                     } else {
-                        console.log(`run 6  -- ${JSON.parse(msg)} -- ${JSON.parse(consumerProtection)}`);
-                        consumerProtection = setConsumerProtection(msg, consumerProtection)
+                        console.log(`run 7`);
+                        if (vertical && vertical.hasOwnProperty("tmallhkDirectSale")) {
+                            console.log(`run 4 -- ${msg}`);
+                            sendNotify(msg)
+                        } else if (tradeConsumerProtection) {
+                            console.log(`run 5  -- ${JSON.parse(msg)} -- ${JSON.parse(tradeConsumerProtection)}`);
+                            tradeConsumerProtection = setTradeConsumerProtection(msg, tradeConsumerProtection)
+                        } else {
+                            console.log(`run 6  -- ${JSON.parse(msg)} -- ${JSON.parse(consumerProtection)}`);
+                            consumerProtection = setConsumerProtection(msg, consumerProtection)
+                        }
+                        apiStack.value = JSON.stringify(value)
+                        
                     }
-                    apiStack.value = JSON.stringify(value)
+                } catch (error) {
+                    console.log(`run 9 -- ${error}`);
                 }
             } else {
                 console.log(`run 2 -- ${msg}`);
