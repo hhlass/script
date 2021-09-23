@@ -1,5 +1,5 @@
 /*
-Version: 1.0.13
+Version: 1.0.14
  */
 
 const $tool = new Tool()
@@ -151,6 +151,7 @@ function setTradeConsumerProtection(data, tradeConsumerProtection) {
     if (typeof data == "string") {
         service.items.unshift(customItem(data, ""))
     } else {
+        console.log(`tb-data1 -> ${data}`);
         const tbitems = priceSummary(data.priceTrend)[0]
         let nonService = tradeConsumerProtection.tradeConsumerService.nonService
         service.items = service.items.concat(nonService.items)
@@ -161,7 +162,7 @@ function setTradeConsumerProtection(data, tradeConsumerProtection) {
 }
 
 function priceSummary(data) {
-    console.log(`tb-data -> ${data} ${JSON.parse(data)}`);
+    console.log(`tb-data -> ${data}`);
     data = data.series[0]
     let summary = `当前: ${parseFloat(data.current / 100.0)}${getSpace(4)}最低: ${parseFloat(data.min / 100.0)}${getSpace(4)}最高: ${parseFloat(data.max / 100.0)}`
     let tbitems = [customItem(summary)]
