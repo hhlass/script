@@ -106,41 +106,17 @@ async function signin() {
 		body.match(/passwd=([^&]+)/)[1];
 	console.log(username+' '+password)
 	$prefs.setValueForKey(`${username}-${password}`, `pikpak-account`);
-
-	let options = {
-		hostname : '127.0.0.1',
-		port     : 8899,
-		path     : 'user.mypikpak.com/v1/auth/signin',
-		method     : 'CONNECT',
-		body: `{"client_id":"YNxT9w7GMdWvEOKa",
-			"username":"${username}",
-			"password":"${password}"}`
+	let token = ''
+	try {
+		token = 'Bearer ' + (await http({
+			url: 'https://user.mypikpak.com/v1/auth/signin',
+			body: `{"client_id":"YcrttD06T9PIkqAY","client_secret":"A3zfcmfNEeyTH0pX2k4GNg",
+				"username":"${username}",
+				"password":"${password}"}`
+		}, 'post'))?.["access_token"];
+	} catch (error) {
+		console.log(error)
 	}
-	let req = http.request(options);
-
-	req.on('connect', function(res, socket) {
-		socket.write('POST / HTTP/1.1\r\n' +
-					 'Host: user.mypikpak.com/v1/auth/signin\r\n' +
-					 'Connection: Close\r\n' +
-					 '\r\n');
-	
-		socket.on('data', function(chunk) {
-			console.log(chunk.toString());
-		});
-	
-		socket.on('end', function() {
-			console.log('socket end.');
-		});
-	});
-	
-	req.end();
-
-	let token = 'Bearer ' + (await http({
-		url: 'https://user.mypikpak.com/v1/auth/signin',
-		body: `{"client_id":"YNxT9w7GMdWvEOKa",
-			"username":"${username}",
-			"password":"${password}"}`
-	}, 'post'))?.["access_token"];
 	$prefs.setValueForKey(token, `pikpak-ck`)
 	console.log(token)
 	return token
