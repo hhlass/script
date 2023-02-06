@@ -32,9 +32,9 @@ console.log(1)
 		case "entry.cgi":
 			if (body.match("Delete&")) {
 				//删除文件
-				req.url = 'https://api-drive.mypikpak.com/drive/v1/files:batchTrash';
-				req.body = `{"ids":["${body.match(/path=([^&]+)/)[1]}"]}`
-				$done(req)
+				myResponse.url = 'https://api-drive.mypikpak.com/drive/v1/files:batchTrash'
+				myResponse.body = `{"ids":["${body.match(/path=([^&]+)/)[1]}"]}`
+				$done(myResponse)
 			} else {
 				//加载目录
 				let path = body.match(/folder_path=([^&]+)/)?.[1];
@@ -56,9 +56,9 @@ console.log(1)
 						};
 					}),
 				);
-
+				myResponse.body =  `{"success":true,"data":{"total":0,"offset":0,"${a}":${shares}}}`
 				$done({
-					response: { status: 200, body: `{"success":true,"data":{"total":0,"offset":0,"${a}":${shares}}}` },
+					myResponse
 				});
 			}
 			break;
@@ -68,11 +68,10 @@ console.log(1)
 			req.url = `https://api-drive.mypikpak.com/drive/v1/files/${fids}?&thumbnail_size=SIZE_LARGE`;
 			let link =
 				(await http(req)).links["application\/octet-stream"].url.replace(/https/, "http");
+			myResponse.headers = { Location: link }
+			myResponse.status = 'HTTP/1.1 302 OK'
 			$done({
-				response: {
-					status: 302,
-					headers: { Location: link }
-				}
+				myResponse
 			});
 
 
