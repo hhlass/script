@@ -7,6 +7,7 @@ Fileball挂载pikpak
 
 let url = $request.url;
 let body = $request.body;
+console.log(1)
 !(async () => {
 	let Token = $prefs.valueForKey("pikpak-ck") || await signin();
 	let req = {
@@ -107,7 +108,6 @@ async function signin() {
 		account.split("-")[1] :
 		body.match(/passwd=([^&]+)/)[1];
 	$prefs.setValueForKey(`${username}-${password}`, `pikpak-account`);
-	console.log(username+', '+password)
 	let token = "";
 	try {
 		token = 'Bearer ' + (await http({
@@ -120,6 +120,5 @@ async function signin() {
 		console.log(error)
 	}
 	$prefs.setValueForKey(token, `pikpak-ck`)
-	console.log(token)
 	return token
 }
