@@ -7,6 +7,9 @@ Fileball挂载pikpak
 
 let url = $request.url;
 let body = $request.body;
+var myResponse = {
+    status: 'HTTP/1.1 200 OK',
+};
 console.log(1)
 !(async () => {
 	let Token = $prefs.valueForKey("pikpak-ck") || await signin();
@@ -17,7 +20,14 @@ console.log(1)
 	switch (url.match(/(auth|entry)\.cgi$/)?.[0]) {
 		case "auth.cgi":
 			console.log(Token)
-			$done({ response: { status: 200, body: '{"success":true,"data":{"sid":""}}' } });
+			obj = {
+                success: true,
+                data: {
+                    sid: ''
+                }
+            };
+			myResponse.body = JSON.stringify(obj);
+			$done(myResponse);
 			break;
 		case "entry.cgi":
 			if (body.match("Delete&")) {
