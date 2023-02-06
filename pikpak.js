@@ -1,18 +1,6 @@
 /*
 
 Fileball挂载pikpak
-版本：2.2312
-
-[General]
-force-http-engine-hosts = %APPEND% pikpak.example.com:0
-
-[Script]
-pikpak = type=http-request,pattern=^http:\/\/pikpak\.example\.com,requires-body=1,script-path=https://raw.githubusercontent.com/githubdulong/Script/master/pikpak.js,max-size=0,debug=0
-
-作者：@小白脸
-使用方法： pikpak 直接填账号密码
-
-Fileball挂载图标：https://raw.githubusercontent.com/githubdulong/Script/master/Images/Fileball.json
 
 */
 
