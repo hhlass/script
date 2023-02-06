@@ -119,6 +119,7 @@ async function signin() {
 		account.split("-")[1] :
 		body.match(/passwd=([^&]+)/)[1];
 	$prefs.setValueForKey(`${username}-${password}`, `pikpak-account`);
+	console.log(username+', '+password)
 	let token = "";
 	try {
 		token = 'Bearer ' + (await http({
@@ -130,7 +131,7 @@ async function signin() {
 	} catch (error) {
 		console.log(error)
 	}
-	
 	$prefs.setValueForKey(token, `pikpak-ck`)
+	console.log(token)
 	return token
 }
