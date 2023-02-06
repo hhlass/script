@@ -7,7 +7,6 @@ Fileball挂载pikpak
 
 let url = $request.url;
 let body = $request.body;
-console.log(1)
 !(async () => {
 	let Token = $prefs.valueForKey("pikpak-ck") || await signin();
 	let req = {
@@ -112,7 +111,7 @@ async function signin() {
 	try {
 		token = 'Bearer ' + (await http({
 			url: 'https://user.mypikpak.com/v1/auth/signin',
-			body: `{"client_id":"YNxT9w7GMdWvEOKa",
+			body: `{"client_id":"YcrttD06T9PIkqAY","client_secret":"A3zfcmfNEeyTH0pX2k4GNg",
 					"username":"${username}",
 					"password":"${password}"}`
 		}, 'post'))?.["access_token"];
