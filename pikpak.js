@@ -16,6 +16,7 @@ console.log(1)
 	}
 	switch (url.match(/(auth|entry)\.cgi$/)?.[0]) {
 		case "auth.cgi":
+			console.log(Token)
 			$done({ response: { status: 200, body: '{"success":true,"data":{"sid":""}}' } });
 			break;
 		case "entry.cgi":
