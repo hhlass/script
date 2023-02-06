@@ -10,7 +10,6 @@ let body = $request.body;
 var myResponse = {
     status: 'HTTP/1.1 200 OK',
 };
-console.log(1)
 !(async () => {
 	let Token = $prefs.valueForKey("pikpak-ck") || await signin();
 	let req = {
@@ -19,24 +18,26 @@ console.log(1)
 	}
 	switch (url.match(/(auth|entry)\.cgi$/)?.[0]) {
 		case "auth.cgi":
-			console.log(Token)
 			obj = {
                 success: true,
                 data: {
                     sid: ''
                 }
             };
+			console.log('auth')
 			myResponse.body = JSON.stringify(obj);
 			$done(myResponse);
 			break;
 		case "entry.cgi":
 			if (body.match("Delete&")) {
 				//删除文件
+				console.log('entry - delete')
 				myResponse.url = 'https://api-drive.mypikpak.com/drive/v1/files:batchTrash'
 				myResponse.body = `{"ids":["${body.match(/path=([^&]+)/)[1]}"]}`
 				$done(myResponse)
 			} else {
 				//加载目录
+				console.log('entry - load dir')
 				let path = body.match(/folder_path=([^&]+)/)?.[1];
 				let a = path ? ((req.url = req.url.replace(/(parent_id=)/, `$1${path}`)), "files") : "shares";
 
@@ -64,6 +65,7 @@ console.log(1)
 			break;
 		default:
 			//加载文件
+			console.log('entry - load file')
 			let fids = url.match("fbdownload") ? hex2str(url.match(/dlink=%22(.*)%22/)[1]) : url.match(/path=(.*$)/)[1];
 			req.url = `https://api-drive.mypikpak.com/drive/v1/files/${fids}?&thumbnail_size=SIZE_LARGE`;
 			let link =
@@ -83,10 +85,9 @@ console.log(1)
 
 function http(req, method = "get", set) {
 	req['method'] = method;
-	console.log('start http')
 	return new Promise((res) => {
 		$task.fetch(req).then(resp => {
-			(set && err || resp?.status === 401) ?
+			(resp?.status === 401) ?
 				res() : res(JSON.parse(resp.body));
 		})
 	});
