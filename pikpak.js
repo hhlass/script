@@ -72,10 +72,11 @@ let body = $request.body;
 
 function http(req, method = "get", set) {
 	req['method'] = method;
+	console.log('start http')
 	return new Promise((res) => {
 		$task.fetch(req).then(resp => {
 			(set && err || resp?.status === 401) ?
-				res() : res(JSON.parse(data));
+				res() : res(JSON.parse(resp.body));
 		})
 	});
 }
