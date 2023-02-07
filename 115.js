@@ -5,7 +5,6 @@ FileBall 挂载 115
 
 const tk = new ToolKit(`115_get_cookie`, `115CookieGet`, {"httpApi": ""})
 const cookieCacheKey = '115Cookie'
-const cidKey = '115Cid'
 const cookieCache = tk.getVal(cookieCacheKey)
 
 let url = $request.url;
@@ -14,10 +13,9 @@ var myResponse = {
     status: 'HTTP/1.1 200 OK',
 };
 !(async () => {
-	let Token = $prefs.valueForKey("pikpak-ck") || await signin();
 	let req = {
 		url: `https://webapi.115.com/files?aid=1&cid=0&o=user_ptime&asc=0&offset=0&show_dir=1&limit=115&code=&scid=&snap=0&natsort=1&record_open_time=1&source=&format=json`,
-		headers: { authorization: Token }
+		headers: { 'Cookie': cookieCache }
 	}
 	switch (url.match(/(auth|entry)\.cgi$/)?.[0]) {
 		case "auth.cgi":
@@ -76,12 +74,18 @@ var myResponse = {
 
 function http(req, method = "get") {
 	req['method'] = method;
-	return new Promise((res) => {
-		$task.fetch(req).then(resp => {
-			(resp?.status === 401) ?
-				res() : res(JSON.parse(resp.body));
-		})
-	});
+    try {
+        return new Promise((res) => {
+            $task.fetch(req).then(resp => {
+                (resp?.status === 401) ?
+                    res() : res(JSON.parse(resp.body));
+            })
+        });
+    } catch (error) {
+        tk.log(error)
+        return new Promise((res) => {res()});
+    }
+	
 }
 
 
