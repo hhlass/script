@@ -58,9 +58,7 @@ var myResponse = {
 					}),
 				);
 				myResponse.body =  `{"success":true,"data":{"total":0,"offset":0,"${a}":${shares}}}`
-				$done({
-					myResponse
-				});
+				$done(myResponse);
 			}
 			break;
 		default:
@@ -72,14 +70,7 @@ var myResponse = {
 				(await http(req)).links["application\/octet-stream"].url.replace(/https/, "http");
 			myResponse.headers = { Location: link }
 			myResponse.status = 'HTTP/1.1 302 OK'
-			$done({
-				myResponse
-			});
-
-
-
-
-
+			$done(myResponse);
 	}
 })();
 
