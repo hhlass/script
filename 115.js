@@ -16,7 +16,7 @@ var myResponse = {
 !(async () => {
 	let Token = $prefs.valueForKey("pikpak-ck") || await signin();
 	let req = {
-		url: `https://api-drive.mypikpak.com/drive/v1/files?filters=%7B%22phase%22%3A%7B%22eq%22%3A%22PHASE_TYPE_COMPLETE%22%7D%2C%22trashed%22%3A%7B%22eq%22%3Afalse%7D%7D&parent_id=&thumbnail_size=SIZE_LARGE`,
+		url: `https://webapi.115.com/files?aid=1&cid=0&o=user_ptime&asc=0&offset=0&show_dir=1&limit=115&code=&scid=&snap=0&natsort=1&record_open_time=1&source=&format=json`,
 		headers: { authorization: Token }
 	}
 	switch (url.match(/(auth|entry)\.cgi$/)?.[0]) {
@@ -45,14 +45,14 @@ var myResponse = {
 				let path = body.match(/folder_path=([^&]+)/)?.[1];
 				let a = path ? ((req.url = req.url.replace(/(parent_id=)/, `$1${path}`)), "files") : "shares";
 
-				items = []
+				items = await http(req, 'get')['data']
                 let shares = JSON.stringify(
                     items.map((item) => {
                         return {
-                            isdir: !item.file_extension,
-                            path: item.id,
-                            name: item.name,
-                            additional: { size: parseInt(item.size) },
+                            isdir: !item.fid,
+                            path: item.cid,
+                            name: item.n,
+                            additional: { size: parseInt(item.s) },
                         };
                     }),
                 );
