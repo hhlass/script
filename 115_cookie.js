@@ -53,7 +53,7 @@ function getCookie() {
         try {
             tk.log(JSON.stringify(data))
             // data = JSON.parse(data)
-            tk.setVal(aliYunPanRefreshTokenKey, data["cookie"])
+            tk.setVal(cookieCacheKey, data["cookie"])
             tk.appendNotifyInfo('🎉成功获取115 cookie，可以关闭相应脚本')
             tk.log(tk.getVal(cookieCacheKey))
         } catch (e) {
