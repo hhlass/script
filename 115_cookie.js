@@ -9,7 +9,7 @@ QuantumultX 本地脚本配置:
 ************************
 
 [rewrite_local]
-#阿里云盘签到cookie
+#115 cookie
 ^https:\/\/my.115.com\/proapi\/3.0\/index.php url script-response-body https://raw.githubusercontent.com/hhlass/script/main/115_cookie.js
 
 */
