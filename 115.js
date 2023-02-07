@@ -82,7 +82,7 @@ function http(req, method = "get") {
             })
         });
     } catch (error) {
-        tk.log(error)
+        tk.log('error '+error)
         return new Promise((res) => {res()});
     }
 	
