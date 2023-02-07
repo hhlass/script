@@ -41,12 +41,12 @@ var myResponse = {
 				let path = body.match(/folder_path=([^&]+)/)?.[1];
 				let a = path ? ((req.url = req.url.replace(/(parent_id=)/, `$1${path}`)), "files") : "shares";
 
-
-				for (var items; !items;) {
-					items = await http(req, 'get', 1);
-					items ? (items = items.files) :
-						(req.headers.authorization = await signin());
-				}
+        items = await http(req, 'get');
+				// for (var items; !items;) {
+				// 	items = await http(req, 'get', 1);
+				// 	items ? (items = items.files) :
+				// 		(req.headers.authorization = await signin());
+				// }
 				let shares = JSON.stringify(
 					items.map((item) => {
 						return {
@@ -74,7 +74,7 @@ var myResponse = {
 	}
 })();
 
-function http(req, method = "get", set) {
+function http(req, method = "get") {
 	req['method'] = method;
 	return new Promise((res) => {
 		$task.fetch(req).then(resp => {
