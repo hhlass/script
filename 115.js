@@ -261,25 +261,28 @@ function m115_decode(src, key) {
     );
 };
 
-async function download_detail(f) {
-  var data, key, tm, tmus;
-  tmus = new Date().getTime();
-  tm = Math.floor(tmus / 1000);
-  ({ data, key } = m115_encode(
-    JSON.stringify({
-      pickcode: f.pc,
-    }),
-    tm
-  ));
-  let req_tmp = {
-    url: `http://proapi.115.com/app/chrome/downurl?t=${tm}`,
-    data: `data=${encodeURIComponent(data)}`,
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  };
-  let data = await http(req_tmp, "post");
-  return JSON.parse(m115_decode(data.data, key));
+function download_detail(f) {
+    return new Promise((res) => {
+        var data, key, tm, tmus;
+        tmus = new Date().getTime();
+        tm = Math.floor(tmus / 1000);
+        ({ data, key } = m115_encode(
+        JSON.stringify({
+            pickcode: f.pc,
+        }),
+        tm
+        ));
+        let req_tmp = {
+        url: `http://proapi.115.com/app/chrome/downurl?t=${tm}`,
+        data: `data=${encodeURIComponent(data)}`,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        };
+        let data = await http(req_tmp, "post");
+        return res(JSON.parse(m115_decode(data.data, key)));
+    });
+    
 }
 
 
