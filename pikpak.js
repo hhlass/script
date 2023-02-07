@@ -24,39 +24,38 @@ var myResponse = {
                     sid: ''
                 }
             };
-			console.log('auth')
+			// console.log('auth')
 			myResponse.body = JSON.stringify(obj);
 			$done(myResponse);
 			break;
 		case "entry.cgi":
 			if (body.match("Delete&")) {
 				//删除文件
-				console.log('entry - delete')
+				// console.log('entry - delete')
 				myResponse.url = 'https://api-drive.mypikpak.com/drive/v1/files:batchTrash'
 				myResponse.body = `{"ids":["${body.match(/path=([^&]+)/)[1]}"]}`
 				$done(myResponse)
 			} else {
 				//加载目录
-				console.log('entry - load dir')
+				// console.log('entry - load dir')
 				let path = body.match(/folder_path=([^&]+)/)?.[1];
 				let a = path ? ((req.url = req.url.replace(/(parent_id=)/, `$1${path}`)), "files") : "shares";
 
-        items = []
+        items = null
         let try_count = 0
-        while (try_count<5 && items.length == 0){
+        while (try_count<5 && items == null){
           tmp = await http(req, 'get');
-          if (tmp != null  && tmp.files != null && tmp.files.length != 0){
+          if (tmp != null  && tmp.files != null){
             items = tmp.files
           }else{
+            console.log('tmp is null or files is null')
             req.headers.authorization = await signin()
             try_count += 1
           }
         }
-				// for (var items; !items;) {
-				// 	items = await http(req, 'get', 1);
-				// 	items ? (items = items.files) :
-				// 		(req.headers.authorization = await signin());
-				// }
+        if(try_count >= 5 && items == null){
+          items = []
+        }
 				let shares = JSON.stringify(
 					items.map((item) => {
 						return {
@@ -73,7 +72,7 @@ var myResponse = {
 			break;
 		default:
 			//加载文件
-			console.log('entry - load file')
+			// console.log('entry - load file')
 			let fids = url.match("fbdownload") ? hex2str(url.match(/dlink=%22(.*)%22/)[1]) : url.match(/path=(.*$)/)[1];
 			req.url = `https://api-drive.mypikpak.com/drive/v1/files/${fids}?&thumbnail_size=SIZE_LARGE`;
 			let link =
