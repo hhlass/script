@@ -1,8 +1,7 @@
-
 /*
 获取115盘 cookie
 
-hostname = my.115.com
+hostname = auth.aliyundrive.com
 
 
 ************************
@@ -11,7 +10,7 @@ QuantumultX 本地脚本配置:
 
 [rewrite_local]
 #阿里云盘签到cookie
-^https:\/\/my.115.com\/proapi\/3.0\/index.php url script-response-body https://raw.githubusercontent.com/lowking/Scripts/master/ali/aliYunPanCheckIn.js
+^https:\/\/my.115.com\/proapi\/3.0\/index.php url script-response-body https://raw.githubusercontent.com/hhlass/script/main/115_cookie.js
 
 */
 
