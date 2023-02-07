@@ -34,14 +34,14 @@ var myResponse = {
 			if (body.match("Delete&")) {
 				//删除文件
 				// console.log('entry - delete')
-                console.log('delete - '+url)
+                console.log('delete - '+url +' - '+body)
 				myResponse.url = 'https://api-drive.mypikpak.com/drive/v1/files:batchTrash'
 				myResponse.body = `{"ids":["${body.match(/path=([^&]+)/)[1]}"]}`
 				$done(myResponse)
 			} else {
 				//加载目录
 				// console.log('entry - load dir')
-                console.log('dir - '+url)
+                console.log('dir - '+url +' - '+body)
 				let path = body.match(/folder_path=([^&]+)/)?.[1];
 				let a = path ? ((req.url = req.url.replace(/(parent_id=)/, `$1${path}`)), "files") : "shares";
 
@@ -63,7 +63,7 @@ var myResponse = {
 		default:
 			//加载文件
 			// console.log('entry - load file')
-            console.log('file - '+url)
+            console.log('file - '+url +' - '+body)
 			let fids = url.match("fbdownload") ? hex2str(url.match(/dlink=%22(.*)%22/)[1]) : url.match(/path=(.*$)/)[1];
 			req.url = `https://api-drive.mypikpak.com/drive/v1/files/${fids}?&thumbnail_size=SIZE_LARGE`;
 			let link =
