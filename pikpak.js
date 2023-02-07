@@ -41,34 +41,34 @@ var myResponse = {
 				let path = body.match(/folder_path=([^&]+)/)?.[1];
 				let a = path ? ((req.url = req.url.replace(/(parent_id=)/, `$1${path}`)), "files") : "shares";
 
-        items = null
-        let try_count = 0
-        while (try_count<5 && items == null){
-          tmp = await http(req, 'get');
-          if (tmp != null  && tmp.files != null){
-            items = tmp.files
-          }else{
-            console.log('tmp is null or files is null')
-            req.headers.authorization = await signin()
-            try_count += 1
-          }
-        }
-        if(try_count >= 5 && items == null){
-          items = []
-        }
-				let shares = JSON.stringify(
-					items.map((item) => {
-						return {
-							isdir: !item.file_extension,
-							path: item.id,
-							name: item.name,
-							additional: { size: parseInt(item.size) },
-						};
-					}),
-				);
-				myResponse.body =  `{"success":true,"data":{"total":0,"offset":0,"${a}":${shares}}}`
-				$done(myResponse);
-			}
+				items = null
+				let try_count = 0
+				while (try_count<5 && items == null){
+					tmp = await http(req, 'get');
+					if (tmp != null  && tmp.files != null){
+					items = tmp.files
+					}else{
+					console.log('tmp is null or files is null')
+					req.headers.authorization = await signin()
+					try_count += 1
+					}
+				}
+				if(try_count >= 5 && items == null){
+					items = []
+				}
+						let shares = JSON.stringify(
+							items.map((item) => {
+								return {
+									isdir: !item.file_extension,
+									path: item.id,
+									name: item.name,
+									additional: { size: parseInt(item.size) },
+								};
+							}),
+						);
+						myResponse.body =  `{"success":true,"data":{"total":0,"offset":0,"${a}":${shares}}}`
+						$done(myResponse);
+					}
 			break;
 		default:
 			//加载文件
