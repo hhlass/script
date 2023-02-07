@@ -149,7 +149,7 @@ var myResponse = {
                 console.log('dir - '+url +' - '+body)
 				let path = body.match(/folder_path=([^&]+)/)?.[1];
 				let a = path ? ((req.url = req.url.replace('cid=0', `cid=${path}`)), "files") : "shares";
-				items = await http(req, 'get').data
+				items = (await http(req, 'get')).data
                 tk.log(JSON.stringify(items))
                 let shares = JSON.stringify(
                     items.map((item) => {
