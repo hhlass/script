@@ -43,7 +43,7 @@ var myResponse = {
 				let path = body.match(/folder_path=([^&]+)/)?.[1];
 				let a = path ? ((req.url = req.url.replace(/(parent_id=)/, `$1${path}`)), "files") : "shares";
 
-				items = await http(req, 'get')['data']
+				items = await http(req, 'get').data
                 tk.log(JSON.stringify(items))
                 let shares = JSON.stringify(
                     items.map((item) => {
