@@ -58,7 +58,7 @@ function getCookie() {
             tk.setVal(cookieCacheKey, cookie)
             
             let cid = ''
-            for (let item in cookie.split('; ')){
+            for (const item of cookie.split('; ')){
                 if (item.toLocaleLowerCase().startsWith('cid=')){
                     cid = item.replace('cid=', '')
                 }
