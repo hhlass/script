@@ -3,7 +3,8 @@ FileBall 挂载 115
 
 */
 
-
+const bigInt = require('https://peterolson.github.io/BigInteger.js/BigInteger.min.js')
+const md5 = require('https://cdn.bootcdn.net/ajax/libs/blueimp-md5/2.18.0/js/md5.min.js')
 const tk = new ToolKit(`115_get_cookie`, `115CookieGet`, { httpApi: "" });
 const new_rsa = new Tool115();
 const cookieCacheKey = "115Cookie";
