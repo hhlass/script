@@ -41,7 +41,16 @@ var myResponse = {
 				let path = body.match(/folder_path=([^&]+)/)?.[1];
 				let a = path ? ((req.url = req.url.replace(/(parent_id=)/, `$1${path}`)), "files") : "shares";
 
-        items = await http(req, 'get');
+        items = []
+        let try_count = 0
+        while (try_count<5 && len(items) == 0){
+          tmp = await http(req, 'get');
+          if (tmp != null  && tmp.files != null){
+            items = tmp.files
+          }else{
+            req.headers.authorization = await signin()
+          }
+        }
 				// for (var items; !items;) {
 				// 	items = await http(req, 'get', 1);
 				// 	items ? (items = items.files) :
