@@ -44,6 +44,7 @@ var myResponse = {
 				let a = path ? ((req.url = req.url.replace(/(parent_id=)/, `$1${path}`)), "files") : "shares";
 
 				items = await http(req, 'get')['data']
+                tk.log(JSON.stringify(items))
                 let shares = JSON.stringify(
                     items.map((item) => {
                         return {
@@ -54,6 +55,7 @@ var myResponse = {
                         };
                     }),
                 );
+                tk.log(shares)
                 myResponse.body =  `{"success":true,"data":{"total":0,"offset":0,"${a}":${shares}}}`
                 $done(myResponse);
                 }
