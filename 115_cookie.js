@@ -1,7 +1,7 @@
 /*
 获取115盘 cookie
 
-hostname = auth.aliyundrive.com
+hostname = my.115.com
 
 
 ************************
