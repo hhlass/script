@@ -24,171 +24,26 @@ const g_key_s = [0x29, 0x23, 0x21, 0x5e];
 
 const g_key_l = [120, 6, 173, 76, 51, 134, 93, 24, 76, 1, 63, 70];
 
-function m115_getkey(length, key) {
-  var i;
-  if (key != null) {
-    return (function () {
-      var j, ref, results;
-      results = [];
-      for (
-        i = j = 0, ref = length;
-        0 <= ref ? j < ref : j > ref;
-        i = 0 <= ref ? ++j : --j
-      ) {
-        results.push(
-          ((key[i] + g_kts[length * i]) & 0xff) ^
-            g_kts[length * (length - 1 - i)]
-        );
-      }
-      return results;
-    })();
-  }
-  if (length === 12) {
-    return g_key_l.slice(0);
-  }
-  return g_key_s.slice(0);
-}
+function m115_getkey(length, key) { var i; if (key != null) { return (function () { var j, ref, results; results = []; for ( i = j = 0, ref = length; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j ) { results.push( ((key[i] + g_kts[length * i]) & 0xff) ^ g_kts[length * (length - 1 - i)] ); } return results; })(); } if (length === 12) { return g_key_l.slice(0); } return g_key_s.slice(0); }
 
-function xor115_enc(src, srclen, key, keylen) {
-  var i, j, k, mod4, ref, ref1, ref2, ret;
-  mod4 = srclen % 4;
-  ret = [];
-  if (mod4 !== 0) {
-    for (
-      i = j = 0, ref = mod4;
-      0 <= ref ? j < ref : j > ref;
-      i = 0 <= ref ? ++j : --j
-    ) {
-      ret.push(src[i] ^ key[i % keylen]);
-    }
-  }
-  for (
-    i = k = ref1 = mod4, ref2 = srclen;
-    ref1 <= ref2 ? k < ref2 : k > ref2;
-    i = ref1 <= ref2 ? ++k : --k
-  ) {
-    ret.push(src[i] ^ key[(i - mod4) % keylen]);
-  }
-  return ret;
-}
+function xor115_enc(src, srclen, key, keylen) { var i, j, k, mod4, ref, ref1, ref2, ret; mod4 = srclen % 4; ret = []; if (mod4 !== 0) { for ( i = j = 0, ref = mod4; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j ) { ret.push(src[i] ^ key[i % keylen]); } } for ( i = k = ref1 = mod4, ref2 = srclen; ref1 <= ref2 ? k < ref2 : k > ref2; i = ref1 <= ref2 ? ++k : --k ) { ret.push(src[i] ^ key[(i - mod4) % keylen]); } return ret; }
 
-function m115_sym_encode(src, srclen, key1, key2) {
-  var k1, k2, ret;
-  k1 = m115_getkey(4, key1);
-  k2 = m115_getkey(12, key2);
-  ret = xor115_enc(src, srclen, k1, 4);
-  ret.reverse();
-  ret = xor115_enc(ret, srclen, k2, 12);
-  return ret;
-}
+function m115_sym_encode(src, srclen, key1, key2) { var k1, k2, ret; k1 = m115_getkey(4, key1); k2 = m115_getkey(12, key2); ret = xor115_enc(src, srclen, k1, 4); ret.reverse(); ret = xor115_enc(ret, srclen, k2, 12); return ret; }
 
-function m115_sym_decode(src, srclen, key1, key2) {
-  var k1, k2, ret;
-  k1 = m115_getkey(4, key1);
-  k2 = m115_getkey(12, key2);
-  ret = xor115_enc(src, srclen, k2, 12);
-  ret.reverse();
-  ret = xor115_enc(ret, srclen, k1, 4);
-  return ret;
-}
+function m115_sym_decode(src, srclen, key1, key2) { var k1, k2, ret; k1 = m115_getkey(4, key1); k2 = m115_getkey(12, key2); ret = xor115_enc(src, srclen, k2, 12); ret.reverse(); ret = xor115_enc(ret, srclen, k1, 4); return ret; }
 
-function stringToBytes(s) {
-  var i, j, ref, ret;
-  ret = [];
-  for (
-    i = j = 0, ref = s.length;
-    0 <= ref ? j < ref : j > ref;
-    i = 0 <= ref ? ++j : --j
-  ) {
-    ret.push(s.charCodeAt(i));
-  }
-  return ret;
-}
+function stringToBytes(s) { var i, j, ref, ret; ret = []; for ( i = j = 0, ref = s.length; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j ) { ret.push(s.charCodeAt(i)); } return ret; }
 
-function bytesToString(b) {
-  var i, j, len, ret;
-  ret = "";
-  for (j = 0, len = b.length; j < len; j++) {
-    i = b[j];
-    ret += String.fromCharCode(i);
-  }
-  return ret;
-}
+function bytesToString(b) { var i, j, len, ret; ret = ""; for (j = 0, len = b.length; j < len; j++) { i = b[j]; ret += String.fromCharCode(i); } return ret; }
 
-function m115_asym_encode(src, srclen) {
-  var i, j, m, ref, ret;
-  m = 128 - 11;
-  ret = "";
-  for (
-    i = j = 0, ref = Math.floor((srclen + m - 1) / m);
-    0 <= ref ? j < ref : j > ref;
-    i = 0 <= ref ? ++j : --j
-  ) {
-    ret += new_rsa.encrypt(
-      bytesToString(src.slice(i * m, Math.min((i + 1) * m, srclen)))
-    );
-  }
-  return window.btoa(new_rsa.hex2a(ret));
-}
+function m115_asym_encode(src, srclen) { var i, j, m, ref, ret; m = 128 - 11; ret = ""; for ( i = j = 0, ref = Math.floor((srclen + m - 1) / m); 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j ) { ret += new_rsa.encrypt( bytesToString(src.slice(i * m, Math.min((i + 1) * m, srclen))) ); } return window.btoa(new_rsa.hex2a(ret)); }
 
-function m115_asym_decode(src, srclen) {
-  var i, j, m, ref, ret;
-  m = 128;
-  ret = "";
-  for (
-    i = j = 0, ref = Math.floor((srclen + m - 1) / m);
-    0 <= ref ? j < ref : j > ref;
-    i = 0 <= ref ? ++j : --j
-  ) {
-    ret += new_rsa.decrypt(
-      bytesToString(src.slice(i * m, Math.min((i + 1) * m, srclen)))
-    );
-  }
-  return stringToBytes(ret);
-}
+function m115_asym_decode(src, srclen) { var i, j, m, ref, ret; m = 128; ret = ""; for ( i = j = 0, ref = Math.floor((srclen + m - 1) / m); 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j ) { ret += new_rsa.decrypt( bytesToString(src.slice(i * m, Math.min((i + 1) * m, srclen))) ); } return stringToBytes(ret); }
 
-function m115_encode(src, tm) {
-  var key, tmp, zz;
-  key = stringToBytes(md5(`!@###@#${tm}DFDR@#@#`));
-  tmp = stringToBytes(src);
-  tmp = m115_sym_encode(tmp, tmp.length, key, null);
-  tmp = key.slice(0, 16).concat(tmp);
-  return {
-    data: m115_asym_encode(tmp, tmp.length),
-    key,
-  };
-}
+function m115_encode(src, tm) { var key, tmp, zz; key = stringToBytes(md5(`!@###@#${tm}DFDR@#@#`)); tmp = stringToBytes(src); tmp = m115_sym_encode(tmp, tmp.length, key, null); tmp = key.slice(0, 16).concat(tmp); return { data: m115_asym_encode(tmp, tmp.length), key, }; }
 
-function m115_decode(src, key) {
-  var tmp;
-  tmp = stringToBytes(window.atob(src));
-  tmp = m115_asym_decode(tmp, tmp.length);
-  return bytesToString(
-    m115_sym_decode(tmp.slice(16), tmp.length - 16, key, tmp.slice(0, 16))
-  );
-}
+function m115_decode(src, key) { var tmp; tmp = stringToBytes(window.atob(src)); tmp = m115_asym_decode(tmp, tmp.length); return bytesToString( m115_sym_decode(tmp.slice(16), tmp.length - 16, key, tmp.slice(0, 16)) ); }
 
-async function download_detail(f) {
-  var data, key, tm, tmus;
-  tmus = new Date().getTime();
-  tm = Math.floor(tmus / 1000);
-  ({ data, key } = m115_encode(
-    JSON.stringify({
-      pickcode: f.pc,
-    }),
-    tm
-  ));
-  let req_tmp = {
-    url: `http://proapi.115.com/app/chrome/downurl?t=${tm}`,
-    data: `data=${encodeURIComponent(data)}`,
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  };
-  let data = await http(req_tmp, "post");
-  let json = JSON.parse(response.responseText);
-  return JSON.parse(m115_decode(json.data, key));
-}
 
 function Tool115() { return new (class { constructor() { this.n = bigInt( "8686980c0f5a24c4b9d43020cd2c22703ff3f450756529058b1cf88f09b8602136477198a6e2683149659bd122c33592fdb5ad47944ad1ea4d36c6b172aad6338c3bb6ac6227502d010993ac967d1aef00f0c8e038de2e4d3bc2ec368af2e9f10a6f1eda4f7262f136420c07c331b871bf139f74f3010e3c4fe57df3afb71683", 16 ); this.e = bigInt("10001", 16); } a2hex(byteArray) { var hexString = ""; var nextHexByte; for (var i = 0; i < byteArray.length; i++) { nextHexByte = byteArray[i].toString(16); if (nextHexByte.length < 2) { nextHexByte = "0" + nextHexByte; } hexString += nextHexByte; } return hexString; } hex2a(hex) { var str = ""; for (var i = 0; i < hex.length; i += 2) { str += String.fromCharCode(parseInt(hex.substr(i, 2), 16)); } return str; } pkcs1pad2(s, n) { if (n < s.length + 11) { return null; } var ba = []; var i = s.length - 1; while (i >= 0 && n > 0) { ba[--n] = s.charCodeAt(i--); } ba[--n] = 0; while (n > 2) { ba[--n] = 0xff; } ba[--n] = 2; ba[--n] = 0; var c = this.a2hex(ba); return bigInt(c, 16); } pkcs1unpad2(a) { var b = a.toString(16); if (b.length % 2 !== 0) { b = "0" + b; } var c = this.hex2a(b); var i = 1; while (c.charCodeAt(i) !== 0) { i++; } return c.slice(i + 1); } encrypt(text) { var m = this.pkcs1pad2(text, 0x80); var c = m.modPow(this.e, this.n); var h = c.toString(16); while (h.length < 0x80 * 2) { h = "0" + h; } return h; } decrypt(text) { var ba = []; var i = 0; while (i < text.length) { ba[i] = text.charCodeAt(i); i += 1; } var a = bigInt(this.a2hex(ba), 16); var c = a.modPow(this.e, this.n); var d = this.pkcs1unpad2(c); return d; } })(); }
   
