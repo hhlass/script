@@ -15,7 +15,8 @@ QuantumultX 本地脚本配置:
 */
 
 const tk = new ToolKit(`115_get_cookie`, `115CookieGet`, {"httpApi": ""})
-const cookieCacheKey = 'lkAliYunPanTokenKey'
+const cookieCacheKey = '115Cookie'
+const cidKey = '115Cid'
 tk.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 D/C501C6D2-FAF6-4DA8-B65B-7B8B392901EB"
 
 if(!tk.isExecComm) {
@@ -53,9 +54,21 @@ function getCookie() {
         try {
             tk.log(JSON.stringify(data))
             // data = JSON.parse(data)
-            tk.setVal(cookieCacheKey, data["cookie"])
-            tk.appendNotifyInfo('🎉成功获取115 cookie，可以关闭相应脚本')
-            tk.log(tk.getVal(cookieCacheKey))
+            let cookie = data["Cookie"]
+            tk.setVal(cookieCacheKey, cookie)
+            
+            let cid = ''
+            for (let item in cookie.split('; ')){
+                if (item.toLocaleLowerCase().startsWith('cid=')){
+                    cid = item.replace('cid=', '')
+                }
+            }
+            if (cid == null || cid == ''){
+                tk.log('❌获取115 cid失败')
+            }
+            tk.setVal(cidKey, cid)
+            tk.appendNotifyInfo('🎉成功获取115 cookie 和 cid，可以关闭相应脚本')
+            tk.log(tk.getVal(cookieCacheKey)+' '+tk.getVal(cidKey))
         } catch (e) {
             tk.log(e)
             tk.appendNotifyInfo('❌获取115 cookie失败')
