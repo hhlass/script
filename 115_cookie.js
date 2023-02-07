@@ -60,7 +60,7 @@ function getCookie() {
             let cid = ''
             for (const item of cookie.split('; ')){
                 if (item.toLocaleLowerCase().startsWith('cid=')){
-                    cid = item.replace('cid=', '')
+                    cid = item.toLocaleLowerCase().replace('cid=', '')
                 }
             }
             if (cid == null || cid == ''){
