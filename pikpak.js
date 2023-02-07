@@ -123,7 +123,7 @@ async function signin() {
 	try {
 		token = 'Bearer ' + (await http({
 			url: 'https://user.mypikpak.com/v1/auth/signin',
-			body: `{"client_id":"YcrttD06T9PIkqAY","client_secret":"A3zfcmfNEeyTH0pX2k4GNg",
+			body: `{"client_id":"YcrttD06T9PIkqAY",
 					"username":"${username}",
 					"password":"${password}"}`
 		}, 'post'))?.["access_token"];
