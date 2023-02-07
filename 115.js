@@ -3,111 +3,108 @@ FileBall 挂载 115
 
 */
 
-
 class MyRsa {
-    constructor() {
-      // this.n = BigInt('0x8686980c0f5a24c4b9d43020cd2c22703ff3f450756529058b1cf88f09b8602136477198a6e2683149659bd122c33592fdb5ad47944ad1ea4d36c6b172aad6338c3bb6ac6227502d010993ac967d1aef00f0c8e038de2e4d3bc2ec368af2e9f10a6f1eda4f7262f136420c07c331b871bf139f74f3010e3c4fe57df3afb71683')
-      // this.e = BigInt('0x10001')
-      this.n = bigInt(
-        "8686980c0f5a24c4b9d43020cd2c22703ff3f450756529058b1cf88f09b8602136477198a6e2683149659bd122c33592fdb5ad47944ad1ea4d36c6b172aad6338c3bb6ac6227502d010993ac967d1aef00f0c8e038de2e4d3bc2ec368af2e9f10a6f1eda4f7262f136420c07c331b871bf139f74f3010e3c4fe57df3afb71683",
-        16
-      );
-      this.e = bigInt("10001", 16);
-    }
+  constructor() {
+    this.n = bigInt(
+      "8686980c0f5a24c4b9d43020cd2c22703ff3f450756529058b1cf88f09b8602136477198a6e2683149659bd122c33592fdb5ad47944ad1ea4d36c6b172aad6338c3bb6ac6227502d010993ac967d1aef00f0c8e038de2e4d3bc2ec368af2e9f10a6f1eda4f7262f136420c07c331b871bf139f74f3010e3c4fe57df3afb71683",
+      16
+    );
+    this.e = bigInt("10001", 16);
+  }
 
-    a2hex(byteArray) {
-      var hexString = "";
-      var nextHexByte;
-      for (var i = 0; i < byteArray.length; i++) {
-        nextHexByte = byteArray[i].toString(16);
-        if (nextHexByte.length < 2) {
-          nextHexByte = "0" + nextHexByte;
-        }
-        hexString += nextHexByte;
+  a2hex(byteArray) {
+    var hexString = "";
+    var nextHexByte;
+    for (var i = 0; i < byteArray.length; i++) {
+      nextHexByte = byteArray[i].toString(16);
+      if (nextHexByte.length < 2) {
+        nextHexByte = "0" + nextHexByte;
       }
-      return hexString;
+      hexString += nextHexByte;
     }
+    return hexString;
+  }
 
-    hex2a(hex) {
-      var str = "";
-      for (var i = 0; i < hex.length; i += 2) {
-        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-      }
-      return str;
+  hex2a(hex) {
+    var str = "";
+    for (var i = 0; i < hex.length; i += 2) {
+      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
     }
+    return str;
+  }
 
-    pkcs1pad2(s, n) {
-      if (n < s.length + 11) {
-        return null;
-      }
-      var ba = [];
-      var i = s.length - 1;
-      while (i >= 0 && n > 0) {
-        ba[--n] = s.charCodeAt(i--);
-      }
-      ba[--n] = 0;
-      while (n > 2) {
-        // random non-zero pad
-        ba[--n] = 0xff;
-      }
-      ba[--n] = 2;
-      ba[--n] = 0;
-      var c = this.a2hex(ba);
-      return bigInt(c, 16);
+  pkcs1pad2(s, n) {
+    if (n < s.length + 11) {
+      return null;
     }
+    var ba = [];
+    var i = s.length - 1;
+    while (i >= 0 && n > 0) {
+      ba[--n] = s.charCodeAt(i--);
+    }
+    ba[--n] = 0;
+    while (n > 2) {
+      // random non-zero pad
+      ba[--n] = 0xff;
+    }
+    ba[--n] = 2;
+    ba[--n] = 0;
+    var c = this.a2hex(ba);
+    return bigInt(c, 16);
+  }
 
-    pkcs1unpad2(a) {
-      var b = a.toString(16);
-      if (b.length % 2 !== 0) {
-        b = "0" + b;
-      }
-      var c = this.hex2a(b);
-      var i = 1;
-      while (c.charCodeAt(i) !== 0) {
-        i++;
-      }
-      return c.slice(i + 1);
+  pkcs1unpad2(a) {
+    var b = a.toString(16);
+    if (b.length % 2 !== 0) {
+      b = "0" + b;
     }
+    var c = this.hex2a(b);
+    var i = 1;
+    while (c.charCodeAt(i) !== 0) {
+      i++;
+    }
+    return c.slice(i + 1);
+  }
 
-    encrypt(text) {
-      var m = this.pkcs1pad2(text, 0x80);
-      var c = m.modPow(this.e, this.n);
-      var h = c.toString(16);
-      while (h.length < 0x80 * 2) {
-        h = "0" + h;
-      }
-      return h;
+  encrypt(text) {
+    var m = this.pkcs1pad2(text, 0x80);
+    var c = m.modPow(this.e, this.n);
+    var h = c.toString(16);
+    while (h.length < 0x80 * 2) {
+      h = "0" + h;
     }
+    return h;
+  }
 
-    decrypt(text) {
-      var ba = [];
-      var i = 0;
-      while (i < text.length) {
-        ba[i] = text.charCodeAt(i);
-        i += 1;
-      }
-      var a = bigInt(this.a2hex(ba), 16);
-      var c = a.modPow(this.e, this.n);
-      var d = this.pkcs1unpad2(c);
-      return d;
+  decrypt(text) {
+    var ba = [];
+    var i = 0;
+    while (i < text.length) {
+      ba[i] = text.charCodeAt(i);
+      i += 1;
     }
+    var a = bigInt(this.a2hex(ba), 16);
+    var c = a.modPow(this.e, this.n);
+    var d = this.pkcs1unpad2(c);
+    return d;
+  }
 }
 
-const new_rsa = new MyRsa()
-const tk = new ToolKit(`115_get_cookie`, `115CookieGet`, {"httpApi": ""})
-const cookieCacheKey = '115Cookie'
-const cookieCache = tk.getVal(cookieCacheKey)
+const new_rsa = new MyRsa();
+const tk = new ToolKit(`115_get_cookie`, `115CookieGet`, { httpApi: "" });
+const cookieCacheKey = "115Cookie";
+const cookieCache = tk.getVal(cookieCacheKey);
 
 const g_kts = [
-    240, 229, 105, 174, 191, 220, 191, 138, 26, 69, 232, 190, 125, 166, 115,
-    184, 222, 143, 231, 196, 69, 218, 134, 196, 155, 100, 139, 20, 106, 180,
-    241, 170, 56, 1, 53, 158, 38, 105, 44, 134, 0, 107, 79, 165, 54, 52, 98,
-    166, 42, 150, 104, 24, 242, 74, 253, 189, 107, 151, 143, 77, 143, 137, 19,
-    183, 108, 142, 147, 237, 14, 13, 72, 62, 215, 47, 136, 216, 254, 254, 126,
-    134, 80, 149, 79, 209, 235, 131, 38, 52, 219, 102, 123, 156, 126, 157, 122,
-    129, 50, 234, 182, 51, 222, 58, 169, 89, 52, 102, 59, 170, 186, 129, 96, 72,
-    185, 213, 129, 156, 248, 108, 132, 119, 255, 84, 120, 38, 95, 190, 232, 30,
-    54, 159, 52, 128, 92, 69, 44, 155, 118, 213, 27, 143, 204, 195, 184, 245,
+  240, 229, 105, 174, 191, 220, 191, 138, 26, 69, 232, 190, 125, 166, 115, 184,
+  222, 143, 231, 196, 69, 218, 134, 196, 155, 100, 139, 20, 106, 180, 241, 170,
+  56, 1, 53, 158, 38, 105, 44, 134, 0, 107, 79, 165, 54, 52, 98, 166, 42, 150,
+  104, 24, 242, 74, 253, 189, 107, 151, 143, 77, 143, 137, 19, 183, 108, 142,
+  147, 237, 14, 13, 72, 62, 215, 47, 136, 216, 254, 254, 126, 134, 80, 149, 79,
+  209, 235, 131, 38, 52, 219, 102, 123, 156, 126, 157, 122, 129, 50, 234, 182,
+  51, 222, 58, 169, 89, 52, 102, 59, 170, 186, 129, 96, 72, 185, 213, 129, 156,
+  248, 108, 132, 119, 255, 84, 120, 38, 95, 190, 232, 30, 54, 159, 52, 128, 92,
+  69, 44, 155, 118, 213, 27, 143, 204, 195, 184, 245,
 ];
 
 const g_key_s = [0x29, 0x23, 0x21, 0x5e];
@@ -117,260 +114,261 @@ const g_key_l = [120, 6, 173, 76, 51, 134, 93, 24, 76, 1, 63, 70];
 let url = $request.url;
 let body = $request.body;
 var myResponse = {
-    status: 'HTTP/1.1 200 OK',
+  status: "HTTP/1.1 200 OK",
 };
 !(async () => {
-	let req = {
-		url: `https://webapi.115.com/files?aid=1&cid=0&o=user_ptime&asc=0&offset=0&show_dir=1&limit=115&code=&scid=&snap=0&natsort=1&record_open_time=1&source=&format=json`,
-		headers: { 'Cookie': cookieCache }
-	}
-	switch (url.match(/(auth|entry)\.cgi$/)?.[0]) {
-		case "auth.cgi":
-			obj = {
-                success: true,
-                data: {
-                    sid: ''
-                }
+  let req = {
+    url: `https://webapi.115.com/files?aid=1&cid=0&o=user_ptime&asc=0&offset=0&show_dir=1&limit=115&code=&scid=&snap=0&natsort=1&record_open_time=1&source=&format=json`,
+    headers: { Cookie: cookieCache },
+  };
+  switch (url.match(/(auth|entry)\.cgi$/)?.[0]) {
+    case "auth.cgi":
+      obj = {
+        success: true,
+        data: {
+          sid: "",
+        },
+      };
+      myResponse.body = JSON.stringify(obj);
+      $done(myResponse);
+      break;
+    case "entry.cgi":
+      if (body.match("Delete&")) {
+        //删除文件
+        // console.log('entry - delete')
+        console.log("delete - " + url + " - " + body);
+        myResponse.url =
+          "https://api-drive.mypikpak.com/drive/v1/files:batchTrash";
+        myResponse.body = `{"ids":["${body.match(/path=([^&]+)/)[1]}"]}`;
+        $done(myResponse);
+      } else {
+        //加载目录
+        // console.log('entry - load dir')
+        console.log("dir - " + url + " - " + body);
+        let path = body.match(/folder_path=([^&]+)/)?.[1];
+        let a = path
+          ? ((req.url = req.url.replace("cid=0", `cid=${path}`)), "files")
+          : "shares";
+        items = (await http(req, "get")).data;
+        tk.log(JSON.stringify(items));
+        let shares = JSON.stringify(
+          items.map((item) => {
+            let path_data = {
+              n: item.n,
+              pc: item.pc,
+              is_dir: !item.fid,
             };
-			myResponse.body = JSON.stringify(obj);
-			$done(myResponse);
-			break;
-		case "entry.cgi":
-			if (body.match("Delete&")) {
-				//删除文件
-				// console.log('entry - delete')
-                console.log('delete - '+url +' - '+body)
-				myResponse.url = 'https://api-drive.mypikpak.com/drive/v1/files:batchTrash'
-				myResponse.body = `{"ids":["${body.match(/path=([^&]+)/)[1]}"]}`
-				$done(myResponse)
-			} else {
-				//加载目录
-				// console.log('entry - load dir')
-                console.log('dir - '+url +' - '+body)
-				let path = body.match(/folder_path=([^&]+)/)?.[1];
-				let a = path ? ((req.url = req.url.replace('cid=0', `cid=${path}`)), "files") : "shares";
-				items = (await http(req, 'get')).data
-                tk.log(JSON.stringify(items))
-                let shares = JSON.stringify(
-                    items.map((item) => {
-                        let path_data = {
-                            "n": item.n,
-                            "pc": item.pc,
-                            "is_dir": !item.fid
-                        }
-                        return {
-                            isdir: !item.fid,
-                            path: JSON.stringify(path_data),
-                            name: item.n,
-                            additional: { size: parseInt(item.s) },
-                        };
-                    }),
-                );
-                tk.log(shares)
-                myResponse.body =  `{"success":true,"data":{"total":0,"offset":0,"${a}":${shares}}}`
-                $done(myResponse);
-                }
-			break;
-		default:
-			//加载文件
-			// console.log('entry - load file')
-            console.log('file - '+url +' - '+body)
-			let fids = url.match("fbdownload") ? hex2str(url.match(/dlink=%22(.*)%22/)[1]) : url.match(/path=(.*$)/)[1];
-            console.log('fids - '+fids)
-			let item = JSON.parse(fids)
-            let downlaod_data = await download_detail(item)
-            console.log(downlaod_data.url)
-			myResponse.headers = { Location: downlaod_data.url }
-			myResponse.status = 'HTTP/1.1 302 OK'
-			$done(myResponse);
-	}
+            return {
+              isdir: !item.fid,
+              path: JSON.stringify(path_data),
+              name: item.n,
+              additional: { size: parseInt(item.s) },
+            };
+          })
+        );
+        tk.log(shares);
+        myResponse.body = `{"success":true,"data":{"total":0,"offset":0,"${a}":${shares}}}`;
+        $done(myResponse);
+      }
+      break;
+    default:
+      //加载文件
+      // console.log('entry - load file')
+      console.log("file - " + url + " - " + body);
+      let fids = url.match("fbdownload")
+        ? hex2str(url.match(/dlink=%22(.*)%22/)[1])
+        : url.match(/path=(.*$)/)[1];
+      console.log("fids - " + fids);
+      let item = JSON.parse(fids);
+      let downlaod_data = await download_detail(item);
+      console.log(downlaod_data.url);
+      myResponse.headers = { Location: downlaod_data.url };
+      myResponse.status = "HTTP/1.1 302 OK";
+      $done(myResponse);
+  }
 })();
 
 function http(req, method = "get") {
-	req['method'] = method;
-    try {
-        return new Promise((res) => {
-            $task.fetch(req).then(resp => {
-                (resp?.status === 401) ?
-                    res() : res(JSON.parse(resp.body));
-            })
-        });
-    } catch (error) {
-        tk.log('error '+error)
-        return new Promise((res) => {res()});
-    }
-	
+  req["method"] = method;
+  try {
+    return new Promise((res) => {
+      $task.fetch(req).then((resp) => {
+        resp?.status === 401 ? res() : res(JSON.parse(resp.body));
+      });
+    });
+  } catch (error) {
+    tk.log("error " + error);
+    return new Promise((res) => {
+      res();
+    });
+  }
 }
 
-m115_getkey = function (length, key) {
-var i;
-if (key != null) {
+function m115_getkey(length, key) {
+  var i;
+  if (key != null) {
     return (function () {
-    var j, ref, results;
-    results = [];
-    for (
+      var j, ref, results;
+      results = [];
+      for (
         i = j = 0, ref = length;
         0 <= ref ? j < ref : j > ref;
         i = 0 <= ref ? ++j : --j
-    ) {
+      ) {
         results.push(
-        ((key[i] + g_kts[length * i]) & 0xff) ^
+          ((key[i] + g_kts[length * i]) & 0xff) ^
             g_kts[length * (length - 1 - i)]
         );
-    }
-    return results;
+      }
+      return results;
     })();
-}
-if (length === 12) {
+  }
+  if (length === 12) {
     return g_key_l.slice(0);
-}
-return g_key_s.slice(0);
+  }
+  return g_key_s.slice(0);
 };
 
-xor115_enc = function (src, srclen, key, keylen) {
-var i, j, k, mod4, ref, ref1, ref2, ret;
-mod4 = srclen % 4;
-ret = [];
-if (mod4 !== 0) {
+function xor115_enc(src, srclen, key, keylen) {
+  var i, j, k, mod4, ref, ref1, ref2, ret;
+  mod4 = srclen % 4;
+  ret = [];
+  if (mod4 !== 0) {
     for (
-    i = j = 0, ref = mod4;
-    0 <= ref ? j < ref : j > ref;
-    i = 0 <= ref ? ++j : --j
+      i = j = 0, ref = mod4;
+      0 <= ref ? j < ref : j > ref;
+      i = 0 <= ref ? ++j : --j
     ) {
-    ret.push(src[i] ^ key[i % keylen]);
+      ret.push(src[i] ^ key[i % keylen]);
     }
-}
-for (
+  }
+  for (
     i = k = ref1 = mod4, ref2 = srclen;
     ref1 <= ref2 ? k < ref2 : k > ref2;
     i = ref1 <= ref2 ? ++k : --k
-) {
+  ) {
     ret.push(src[i] ^ key[(i - mod4) % keylen]);
-}
-return ret;
+  }
+  return ret;
 };
 
-m115_sym_encode = function (src, srclen, key1, key2) {
-var k1, k2, ret;
-k1 = m115_getkey(4, key1);
-k2 = m115_getkey(12, key2);
-ret = xor115_enc(src, srclen, k1, 4);
-ret.reverse();
-ret = xor115_enc(ret, srclen, k2, 12);
-return ret;
+function m115_sym_encode(src, srclen, key1, key2) {
+  var k1, k2, ret;
+  k1 = m115_getkey(4, key1);
+  k2 = m115_getkey(12, key2);
+  ret = xor115_enc(src, srclen, k1, 4);
+  ret.reverse();
+  ret = xor115_enc(ret, srclen, k2, 12);
+  return ret;
 };
 
-m115_sym_decode = function (src, srclen, key1, key2) {
-var k1, k2, ret;
-k1 = m115_getkey(4, key1);
-k2 = m115_getkey(12, key2);
-ret = xor115_enc(src, srclen, k2, 12);
-ret.reverse();
-ret = xor115_enc(ret, srclen, k1, 4);
-return ret;
+function m115_sym_decode(src, srclen, key1, key2) {
+  var k1, k2, ret;
+  k1 = m115_getkey(4, key1);
+  k2 = m115_getkey(12, key2);
+  ret = xor115_enc(src, srclen, k2, 12);
+  ret.reverse();
+  ret = xor115_enc(ret, srclen, k1, 4);
+  return ret;
 };
 
-stringToBytes = function (s) {
-var i, j, ref, ret;
-ret = [];
-for (
+function stringToBytes(s) {
+  var i, j, ref, ret;
+  ret = [];
+  for (
     i = j = 0, ref = s.length;
     0 <= ref ? j < ref : j > ref;
     i = 0 <= ref ? ++j : --j
-) {
+  ) {
     ret.push(s.charCodeAt(i));
-}
-return ret;
+  }
+  return ret;
 };
 
-bytesToString = function (b) {
-var i, j, len, ret;
-ret = "";
-for (j = 0, len = b.length; j < len; j++) {
+function bytesToString(b) {
+  var i, j, len, ret;
+  ret = "";
+  for (j = 0, len = b.length; j < len; j++) {
     i = b[j];
     ret += String.fromCharCode(i);
-}
-return ret;
+  }
+  return ret;
 };
 
-m115_asym_encode = function (src, srclen) {
-var i, j, m, ref, ret;
-m = 128 - 11;
-ret = "";
-for (
+function m115_asym_encode(src, srclen) {
+  var i, j, m, ref, ret;
+  m = 128 - 11;
+  ret = "";
+  for (
     i = j = 0, ref = Math.floor((srclen + m - 1) / m);
     0 <= ref ? j < ref : j > ref;
     i = 0 <= ref ? ++j : --j
-) {
+  ) {
     ret += new_rsa.encrypt(
-    bytesToString(src.slice(i * m, Math.min((i + 1) * m, srclen)))
+      bytesToString(src.slice(i * m, Math.min((i + 1) * m, srclen)))
     );
-}
-return window.btoa(new_rsa.hex2a(ret));
+  }
+  return window.btoa(new_rsa.hex2a(ret));
 };
 
-m115_asym_decode = function (src, srclen) {
-var i, j, m, ref, ret;
-m = 128;
-ret = "";
-for (
+function m115_asym_decode(src, srclen) {
+  var i, j, m, ref, ret;
+  m = 128;
+  ret = "";
+  for (
     i = j = 0, ref = Math.floor((srclen + m - 1) / m);
     0 <= ref ? j < ref : j > ref;
     i = 0 <= ref ? ++j : --j
-) {
+  ) {
     ret += new_rsa.decrypt(
-    bytesToString(src.slice(i * m, Math.min((i + 1) * m, srclen)))
+      bytesToString(src.slice(i * m, Math.min((i + 1) * m, srclen)))
     );
-}
-return stringToBytes(ret);
+  }
+  return stringToBytes(ret);
 };
 
-m115_encode = function (src, tm) {
-    var key, tmp, zz;
-    key = stringToBytes(md5(`!@###@#${tm}DFDR@#@#`));
-    tmp = stringToBytes(src);
-    tmp = m115_sym_encode(tmp, tmp.length, key, null);
-    tmp = key.slice(0, 16).concat(tmp);
-    return {
-      data: m115_asym_encode(tmp, tmp.length),
-      key,
-    };
+function m115_encode(src, tm) {
+  var key, tmp, zz;
+  key = stringToBytes(md5(`!@###@#${tm}DFDR@#@#`));
+  tmp = stringToBytes(src);
+  tmp = m115_sym_encode(tmp, tmp.length, key, null);
+  tmp = key.slice(0, 16).concat(tmp);
+  return {
+    data: m115_asym_encode(tmp, tmp.length),
+    key,
+  };
 };
 
-m115_decode = function (src, key) {
-var tmp;
-tmp = stringToBytes(window.atob(src));
-tmp = m115_asym_decode(tmp, tmp.length);
-return bytesToString(
+function m115_decode(src, key) {
+  var tmp;
+  tmp = stringToBytes(window.atob(src));
+  tmp = m115_asym_decode(tmp, tmp.length);
+  return bytesToString(
     m115_sym_decode(tmp.slice(16), tmp.length - 16, key, tmp.slice(0, 16))
-);
+  );
 };
 
 async function download_detail(f) {
-    var data, key, tm, tmus;
-    tmus = new Date().getTime();
-    tm = Math.floor(tmus / 1000);
-    ({ data, key } = m115_encode(
-      JSON.stringify({
-        pickcode: f.pc,
-      }),
-      tm
-    ));
-    let req_tmp = {
-        url: `http://proapi.115.com/app/chrome/downurl?t=${tm}`,
-        data: `data=${encodeURIComponent(data)}`,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        }
-    }
-    let data = await http(req_tmp, 'post')
-    let json = JSON.parse(response.responseText);
-    return JSON.parse(m115_decode(json.data, key));
-};
-
-
-
-
+  var data, key, tm, tmus;
+  tmus = new Date().getTime();
+  tm = Math.floor(tmus / 1000);
+  ({ data, key } = m115_encode(
+    JSON.stringify({
+      pickcode: f.pc,
+    }),
+    tm
+  ));
+  let req_tmp = {
+    url: `http://proapi.115.com/app/chrome/downurl?t=${tm}`,
+    data: `data=${encodeURIComponent(data)}`,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  };
+  let data = await http(req_tmp, "post");
+  let json = JSON.parse(response.responseText);
+  return JSON.parse(m115_decode(json.data, key));
+}
 
 //ToolKit-start
 function ToolKit(t, s, i) { return new (class { constructor(t, s, i) { this.tgEscapeCharMapping = { "&": "＆", "#": "＃" }; this.userAgent = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.2 Safari/605.1.15`; this.prefix = `lk`; this.name = t; this.id = s; this.data = null; this.dataFile = this.getRealPath(`${this.prefix}${this.id}.dat`); this.boxJsJsonFile = this.getRealPath( `${this.prefix}${this.id}.boxjs.json` ); this.options = i; this.isExecComm = false; this.isEnableLog = this.getVal(`${this.prefix}IsEnableLog${this.id}`); this.isEnableLog = this.isEmpty(this.isEnableLog) ? true : JSON.parse(this.isEnableLog); this.isNotifyOnlyFail = this.getVal( `${this.prefix}NotifyOnlyFail${this.id}` ); this.isNotifyOnlyFail = this.isEmpty(this.isNotifyOnlyFail) ? false : JSON.parse(this.isNotifyOnlyFail); this.isEnableTgNotify = this.getVal( `${this.prefix}IsEnableTgNotify${this.id}` ); this.isEnableTgNotify = this.isEmpty(this.isEnableTgNotify) ? false : JSON.parse(this.isEnableTgNotify); this.tgNotifyUrl = this.getVal(`${this.prefix}TgNotifyUrl${this.id}`); this.isEnableTgNotify = this.isEnableTgNotify ? !this.isEmpty(this.tgNotifyUrl) : this.isEnableTgNotify; this.costTotalStringKey = `${this.prefix}CostTotalString${this.id}`; this.costTotalString = this.getVal(this.costTotalStringKey); this.costTotalString = this.isEmpty(this.costTotalString) ? `0,0` : this.costTotalString.replace('"', ""); this.costTotalMs = this.costTotalString.split(",")[0]; this.execCount = this.costTotalString.split(",")[1]; this.costTotalMs = this.isEmpty(this.costTotalMs) ? 0 : parseInt(this.costTotalMs); this.execCount = this.isEmpty(this.execCount) ? 0 : parseInt(this.execCount); this.logSeparator = "\n██"; this.startTime = new Date().getTime(); this.node = (() => { if (this.isNode()) { const t = require("request"); return { request: t }; } else { return null; } })(); this.execStatus = true; this.notifyInfo = []; this.log(`${this.name}, 开始执行!`); this.execComm(); } getRealPath(t) { if (this.isNode()) { let s = process.argv.slice(1, 2)[0].split("/"); s[s.length - 1] = t; return s.join("/"); } return t; } async execComm() { if (this.isNode()) { this.comm = process.argv.slice(1); let t = false; if (this.comm[1] == "p") { this.isExecComm = true; this.log(`开始执行指令【${this.comm[1]}】=> 发送到手机测试脚本！`); if ( this.isEmpty(this.options) || this.isEmpty(this.options.httpApi) ) { this.log(`未设置options，使用默认值`); if (this.isEmpty(this.options)) { this.options = {}; } this.options.httpApi = `ffff@10.0.0.9:6166`; } else { if (!/.*?@.*?:[0-9]+/.test(this.options.httpApi)) { t = true; this.log(`❌httpApi格式错误！格式：ffff@3.3.3.18:6166`); this.done(); } } if (!t) { this.callApi(this.comm[2]); } } } } callApi(t) { let s = this.comm[0]; this.log(`获取【${s}】内容传给手机`); let i = ""; this.fs = this.fs ? this.fs : require("fs"); this.path = this.path ? this.path : require("path"); const e = this.path.resolve(s); const o = this.path.resolve(process.cwd(), s); const h = this.fs.existsSync(e); const r = !h && this.fs.existsSync(o); if (h || r) { const t = h ? e : o; try { i = this.fs.readFileSync(t); } catch (t) { i = ""; } } else { i = ""; } let n = { url: `http://${ this.options.httpApi.split("@")[1] }/v1/scripting/evaluate`, headers: { "X-Key": `${this.options.httpApi.split("@")[0]}` }, body: { script_text: `${i}`, mock_type: "cron", timeout: !this.isEmpty(t) && t > 5 ? t : 5, }, json: true, }; this.post(n, (t, i, e) => { this.log(`已将脚本【${s}】发给手机！`); this.done(); }); } getCallerFileNameAndLine() { let t; try { throw Error(""); } catch (s) { t = s; } const s = t.stack; const i = s.split("\n"); let e = 1; if (e !== 0) { const t = i[e]; this.path = this.path ? this.path : require("path"); return `[${t.substring( t.lastIndexOf(this.path.sep) + 1, t.lastIndexOf(":") )}]`; } else { return "[-]"; } } getFunName(t) { var s = t.toString(); s = s.substr("function ".length); s = s.substr(0, s.indexOf("(")); return s; } boxJsJsonBuilder(t, s) { if (this.isNode()) { if (!this.isJsonObject(t) || !this.isJsonObject(s)) { this.log("构建BoxJsJson传入参数格式错误，请传入json对象"); return; } this.log("using node"); let i = ["settings", "keys"]; const e = "https://raw.githubusercontent.com/Orz-3"; let o = {}; let h = "#lk{script_url}"; if (s && s.hasOwnProperty("script_url")) { h = this.isEmpty(s["script_url"]) ? "#lk{script_url}" : s["script_url"]; } o.id = `${this.prefix}${this.id}`; o.name = this.name; o.desc_html = `⚠️使用说明</br>详情【<a href='${h}?raw=true'><font class='red--text'>点我查看</font></a>】`; o.icons = [ `${e}/mini/master/Alpha/${this.id.toLocaleLowerCase()}.png`, `${e}/mini/master/Color/${this.id.toLocaleLowerCase()}.png`, ]; o.keys = []; o.settings = [ { id: `${this.prefix}IsEnableLog${this.id}`, name: "开启/关闭日志", val: true, type: "boolean", desc: "默认开启", }, { id: `${this.prefix}NotifyOnlyFail${this.id}`, name: "只当执行失败才通知", val: false, type: "boolean", desc: "默认关闭", }, { id: `${this.prefix}IsEnableTgNotify${this.id}`, name: "开启/关闭Telegram通知", val: false, type: "boolean", desc: "默认关闭", }, { id: `${this.prefix}TgNotifyUrl${this.id}`, name: "Telegram通知地址", val: "", type: "text", desc: "Tg的通知地址，如：https://api.telegram.org/bot-token/sendMessage?chat_id=-100140&parse_mode=Markdown&text=", }, ]; o.author = "#lk{author}"; o.repo = "#lk{repo}"; o.script = `${h}?raw=true`; if (!this.isEmpty(t)) { for (let s in i) { let e = i[s]; if (!this.isEmpty(t[e])) { if (e === "settings") { for (let s = 0; s < t[e].length; s++) { let i = t[e][s]; for (let t = 0; t < o.settings.length; t++) { let s = o.settings[t]; if (i.id === s.id) { o.settings.splice(t, 1); } } } } o[e] = o[e].concat(t[e]); } delete t[e]; } } Object.assign(o, t); if (this.isNode()) { this.fs = this.fs ? this.fs : require("fs"); this.path = this.path ? this.path : require("path"); const t = this.path.resolve(this.boxJsJsonFile); const i = this.path.resolve(process.cwd(), this.boxJsJsonFile); const e = this.fs.existsSync(t); const h = !e && this.fs.existsSync(i); const r = JSON.stringify(o, null, "\t"); if (e) { this.fs.writeFileSync(t, r); } else if (h) { this.fs.writeFileSync(i, r); } else { this.fs.writeFileSync(t, r); } let n = "/Users/lowking/Desktop/Scripts/lowking.boxjs.json"; if (s.hasOwnProperty("target_boxjs_json_path")) { n = s["target_boxjs_json_path"]; } let a = JSON.parse(this.fs.readFileSync(n)); if ( a.hasOwnProperty("apps") && Array.isArray(a["apps"]) && a["apps"].length > 0 ) { let t = a.apps; let i = t.indexOf( t.filter((t) => { return t.id == o.id; })[0] ); if (i >= 0) { a.apps[i] = o; } else { a.apps.push(o); } let e = JSON.stringify(a, null, 2); if (!this.isEmpty(s)) { for (const t in s) { let i = ""; if (s.hasOwnProperty(t)) { i = s[t]; } else if (t === "author") { i = "@lowking"; } else if (t === "repo") { i = "https://github.com/lowking/Scripts"; } e = e.replace(`#lk{${t}}`, i); } } const h = /(?:#lk\{)(.+?)(?=\})/; let r = h.exec(e); if (r !== null) { this.log( `生成BoxJs还有未配置的参数，请参考https://github.com/lowking/Scripts/blob/master/util/example/ToolKitDemo.js#L17-L18传入参数：\n` ); } let l = new Set(); while ((r = h.exec(e)) !== null) { l.add(r[1]); e = e.replace(`#lk{${r[1]}}`, ``); } l.forEach((t) => { console.log(`${t} `); }); this.fs.writeFileSync(n, e); } } } } isJsonObject(t) { return ( typeof t == "object" && Object.prototype.toString.call(t).toLowerCase() == "[object object]" && !t.length ); } appendNotifyInfo(t, s) { if (s == 1) { this.notifyInfo = t; } else { this.notifyInfo.push(t); } } prependNotifyInfo(t) { this.notifyInfo.splice(0, 0, t); } execFail() { this.execStatus = false; } isRequest() { return typeof $request != "undefined"; } isSurge() { return typeof $httpClient != "undefined"; } isQuanX() { return typeof $task != "undefined"; } isLoon() { return typeof $loon != "undefined"; } isJSBox() { return typeof $app != "undefined" && typeof $http != "undefined"; } isStash() { return ( "undefined" !== typeof $environment && $environment["stash-version"] ); } isNode() { return typeof require == "function" && !this.isJSBox(); } sleep(t) { return new Promise((s) => setTimeout(s, t)); } log(t) { if (this.isEnableLog) console.log(`${this.logSeparator}${t}`); } logErr(t) { this.execStatus = true; if (this.isEnableLog) { console.log(`${this.logSeparator}${this.name}执行异常:`); console.log(t); console.log(`\n${t.message}`); } } msg(t, s, i, e) { if (!this.isRequest() && this.isNotifyOnlyFail && this.execStatus) { } else { if (this.isEmpty(s)) { if (Array.isArray(this.notifyInfo)) { s = this.notifyInfo.join("\n"); } else { s = this.notifyInfo; } } if (!this.isEmpty(s)) { if (this.isEnableTgNotify) { this.log(`${this.name}Tg通知开始`); for (let t in this.tgEscapeCharMapping) { if (!this.tgEscapeCharMapping.hasOwnProperty(t)) { continue; } s = s.replace(t, this.tgEscapeCharMapping[t]); } this.get( { url: encodeURI(`${this.tgNotifyUrl}📌${this.name}\n${s}`) }, (t, s, i) => { this.log(`Tg通知完毕`); } ); } else { let o = {}; const h = !this.isEmpty(i); const r = !this.isEmpty(e); if (this.isQuanX()) { if (h) o["open-url"] = i; if (r) o["media-url"] = e; $notify(this.name, t, s, o); } if (this.isSurge() || this.isStash()) { if (h) o["url"] = i; $notification.post(this.name, t, s, o); } if (this.isNode()) this.log("⭐️" + this.name + t + s); if (this.isJSBox()) $push.schedule({ title: this.name, body: t ? t + "\n" + s : s }); } } } } getVal(t) { if (this.isSurge() || this.isLoon() || this.isStash()) { return $persistentStore.read(t); } else if (this.isQuanX()) { return $prefs.valueForKey(t); } else if (this.isNode()) { this.data = this.loadData(); return this.data[t]; } else { return (this.data && this.data[t]) || null; } } setVal(t, s) { if (this.isSurge() || this.isLoon() || this.isStash()) { return $persistentStore.write(s, t); } else if (this.isQuanX()) { return $prefs.setValueForKey(s, t); } else if (this.isNode()) { this.data = this.loadData(); this.data[t] = s; this.writeData(); return true; } else { return (this.data && this.data[t]) || null; } } loadData() { if (this.isNode()) { this.fs = this.fs ? this.fs : require("fs"); this.path = this.path ? this.path : require("path"); const t = this.path.resolve(this.dataFile); const s = this.path.resolve(process.cwd(), this.dataFile); const i = this.fs.existsSync(t); const e = !i && this.fs.existsSync(s); if (i || e) { const e = i ? t : s; try { return JSON.parse(this.fs.readFileSync(e)); } catch (t) { return {}; } } else return {}; } else return {}; } writeData() { if (this.isNode()) { this.fs = this.fs ? this.fs : require("fs"); this.path = this.path ? this.path : require("path"); const t = this.path.resolve(this.dataFile); const s = this.path.resolve(process.cwd(), this.dataFile); const i = this.fs.existsSync(t); const e = !i && this.fs.existsSync(s); const o = JSON.stringify(this.data); if (i) { this.fs.writeFileSync(t, o); } else if (e) { this.fs.writeFileSync(s, o); } else { this.fs.writeFileSync(t, o); } } } adapterStatus(t) { if (t) { if (t.status) { t["statusCode"] = t.status; } else if (t.statusCode) { t["status"] = t.statusCode; } } return t; } get(t, s = () => {}) { if (this.isQuanX()) { if (typeof t == "string") t = { url: t }; t["method"] = "GET"; $task.fetch(t).then( (t) => { s(null, this.adapterStatus(t), t.body); }, (t) => s(t.error, null, null) ); } if (this.isSurge() || this.isLoon() || this.isStash()) $httpClient.get(t, (t, i, e) => { s(t, this.adapterStatus(i), e); }); if (this.isNode()) { this.node.request(t, (t, i, e) => { s(t, this.adapterStatus(i), e); }); } if (this.isJSBox()) { if (typeof t == "string") t = { url: t }; t["header"] = t["headers"]; t["handler"] = function (t) { let i = t.error; if (i) i = JSON.stringify(t.error); let e = t.data; if (typeof e == "object") e = JSON.stringify(t.data); s(i, this.adapterStatus(t.response), e); }; $http.get(t); } } post(t, s = () => {}) { if (this.isQuanX()) { if (typeof t == "string") t = { url: t }; t["method"] = "POST"; $task.fetch(t).then( (t) => { s(null, this.adapterStatus(t), t.body); }, (t) => s(t.error, null, null) ); } if (this.isSurge() || this.isLoon() || this.isStash()) { $httpClient.post(t, (t, i, e) => { s(t, this.adapterStatus(i), e); }); } if (this.isNode()) { this.node.request.post(t, (t, i, e) => { s(t, this.adapterStatus(i), e); }); } if (this.isJSBox()) { if (typeof t == "string") t = { url: t }; t["header"] = t["headers"]; t["handler"] = function (t) { let i = t.error; if (i) i = JSON.stringify(t.error); let e = t.data; if (typeof e == "object") e = JSON.stringify(t.data); s(i, this.adapterStatus(t.response), e); }; $http.post(t); } } put(t, s = () => {}) { if (this.isQuanX()) { if (typeof t == "string") t = { url: t }; t["method"] = "PUT"; $task.fetch(t).then( (t) => { s(null, this.adapterStatus(t), t.body); }, (t) => s(t.error, null, null) ); } if (this.isSurge() || this.isLoon() || this.isStash()) { t.method = "PUT"; $httpClient.put(t, (t, i, e) => { s(t, this.adapterStatus(i), e); }); } if (this.isNode()) { t.method = "PUT"; this.node.request.put(t, (t, i, e) => { s(t, this.adapterStatus(i), e); }); } if (this.isJSBox()) { if (typeof t == "string") t = { url: t }; t["header"] = t["headers"]; t["handler"] = function (t) { let i = t.error; if (i) i = JSON.stringify(t.error); let e = t.data; if (typeof e == "object") e = JSON.stringify(t.data); s(i, this.adapterStatus(t.response), e); }; $http.post(t); } } costTime() { let t = `${this.name}执行完毕！`; if (this.isNode() && this.isExecComm) { t = `指令【${this.comm[1]}】执行完毕！`; } const s = new Date().getTime(); const i = s - this.startTime; const e = i / 1e3; this.execCount++; this.costTotalMs += i; this.log( `${t}耗时【${e}】秒\n总共执行【${this.execCount}】次，平均耗时【${( this.costTotalMs / this.execCount / 1e3 ).toFixed(4)}】秒` ); this.setVal( this.costTotalStringKey, JSON.stringify(`${this.costTotalMs},${this.execCount}`) ); } done(t = {}) { this.costTime(); if (this.isSurge() || this.isQuanX() || this.isLoon() || this.isStash()) { $done(t); } } getRequestUrl() { return $request.url; } getResponseBody() { return $response.body; } getResponseHeaders() { return $response.headers; } getRequestHeaders() { return $request.headers; } isGetCookie(t) { return !!($request.method != "OPTIONS" && this.getRequestUrl().match(t)); } isEmpty(t) { return ( typeof t == "undefined" || t == null || t == "" || t == "null" || t == "undefined" || t.length === 0 ); } randomString(t) { t = t || 32; var s = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"; var i = s.length; var e = ""; for (let o = 0; o < t; o++) { e += s.charAt(Math.floor(Math.random() * i)); } return e; } autoComplete(t, s, i, e, o, h, r, n, a, l) { t += ``; if (t.length < o) { while (t.length < o) { if (h == 0) { t += e; } else { t = e + t; } } } if (r) { let s = ``; for (var f = 0; f < n; f++) { s += l; } t = t.substring(0, a) + s + t.substring(n + a); } t = s + t + i; return this.toDBC(t); } customReplace(t, s, i, e) { try { if (this.isEmpty(i)) { i = "#{"; } if (this.isEmpty(e)) { e = "}"; } for (let o in s) { t = t.replace(`${i}${o}${e}`, s[o]); } } catch (t) { this.logErr(t); } return t; } toDBC(t) { var s = ""; for (var i = 0; i < t.length; i++) { if (t.charCodeAt(i) == 32) { s = s + String.fromCharCode(12288); } else if (t.charCodeAt(i) < 127) { s = s + String.fromCharCode(t.charCodeAt(i) + 65248); } } return s; } hash(t) { let s = 0, i, e; for (i = 0; i < t.length; i++) { e = t.charCodeAt(i); s = (s << 5) - s + e; s |= 0; } return String(s); } formatDate(t, s) { let i = { "M+": t.getMonth() + 1, "d+": t.getDate(), "H+": t.getHours(), "m+": t.getMinutes(), "s+": t.getSeconds(), "q+": Math.floor((t.getMonth() + 3) / 3), S: t.getMilliseconds(), }; if (/(y+)/.test(s)) s = s.replace( RegExp.$1, (t.getFullYear() + "").substr(4 - RegExp.$1.length) ); for (let t in i) if (new RegExp("(" + t + ")").test(s)) s = s.replace( RegExp.$1, RegExp.$1.length == 1 ? i[t] : ("00" + i[t]).substr(("" + i[t]).length) ); return s; } })(t, s, i); }
