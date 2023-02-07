@@ -52,11 +52,12 @@ function getCookie() {
         // tk.log(`获取到的cookie：${data}`)
         try {
             data = JSON.parse(data)
-            console.log(data)
+            tk.log(data)
             tk.setVal(aliYunPanRefreshTokenKey, data["cookie"])
             tk.appendNotifyInfo('🎉成功获取115 cookie，可以关闭相应脚本')
-            console.log(tk.getVal(cookieCacheKey))
+            tk.log(tk.getVal(cookieCacheKey))
         } catch (e) {
+            tk.log(e)
             tk.appendNotifyInfo('❌获取115 cookie失败')
         }
         tk.msg('')
