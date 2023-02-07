@@ -5,7 +5,12 @@ var bigInt=function(t){"use strict";var e=1e7,r=9007199254740992,o=f(r),n="01234
 
 
 const new_rsa = new Tool115();
-let a = new_rsa.encrypt('1234')
+let tmp = {
+      "n": "www.imp4.cc无水印高清MP4电影.txt",
+      "pc": "c62vlx6i51j8ndxns",
+      "is_dir": false
+    }
+let a = await download_detail(tmp)
 console.log(a)
 
 const g_kts = [
@@ -23,6 +28,22 @@ const g_kts = [
 const g_key_s = [0x29, 0x23, 0x21, 0x5e];
 
 const g_key_l = [120, 6, 173, 76, 51, 134, 93, 24, 76, 1, 63, 70];
+
+function http(req, method = "get") {
+  req["method"] = method;
+  try {
+    return new Promise((res) => {
+      $task.fetch(req).then((resp) => {
+        resp?.status === 401 ? res() : res(JSON.parse(resp.body));
+      });
+    });
+  } catch (error) {
+    tk.log("error " + error);
+    return new Promise((res) => {
+      res();
+    });
+  }
+}
 
 function m115_getkey(length, key) { var i; if (key != null) { return (function () { var j, ref, results; results = []; for ( i = j = 0, ref = length; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j ) { results.push( ((key[i] + g_kts[length * i]) & 0xff) ^ g_kts[length * (length - 1 - i)] ); } return results; })(); } if (length === 12) { return g_key_l.slice(0); } return g_key_s.slice(0); }
 
@@ -43,6 +64,8 @@ function m115_asym_decode(src, srclen) { var i, j, m, ref, ret; m = 128; ret = "
 function m115_encode(src, tm) { var key, tmp, zz; key = stringToBytes(md5(`!@###@#${tm}DFDR@#@#`)); tmp = stringToBytes(src); tmp = m115_sym_encode(tmp, tmp.length, key, null); tmp = key.slice(0, 16).concat(tmp); return { data: m115_asym_encode(tmp, tmp.length), key, }; }
 
 function m115_decode(src, key) { var tmp; tmp = stringToBytes(window.atob(src)); tmp = m115_asym_decode(tmp, tmp.length); return bytesToString( m115_sym_decode(tmp.slice(16), tmp.length - 16, key, tmp.slice(0, 16)) ); }
+
+async function download_detail(f) { var data, key, tm, tmus; tmus = new Date().getTime(); tm = Math.floor(tmus / 1000); ({ data, key } = m115_encode( JSON.stringify({ pickcode: f.pc, }), tm )); let req_tmp = { url: `http://proapi.115.com/app/chrome/downurl?t=${tm}`, data: `data=${encodeURIComponent(data)}`, headers: { "Content-Type": "application/x-www-form-urlencoded", }, }; let data = await http(req_tmp, "post"); return JSON.parse(m115_decode(data.data, key)); }
 
 
 function Tool115() { return new (class { constructor() { this.n = bigInt( "8686980c0f5a24c4b9d43020cd2c22703ff3f450756529058b1cf88f09b8602136477198a6e2683149659bd122c33592fdb5ad47944ad1ea4d36c6b172aad6338c3bb6ac6227502d010993ac967d1aef00f0c8e038de2e4d3bc2ec368af2e9f10a6f1eda4f7262f136420c07c331b871bf139f74f3010e3c4fe57df3afb71683", 16 ); this.e = bigInt("10001", 16); } a2hex(byteArray) { var hexString = ""; var nextHexByte; for (var i = 0; i < byteArray.length; i++) { nextHexByte = byteArray[i].toString(16); if (nextHexByte.length < 2) { nextHexByte = "0" + nextHexByte; } hexString += nextHexByte; } return hexString; } hex2a(hex) { var str = ""; for (var i = 0; i < hex.length; i += 2) { str += String.fromCharCode(parseInt(hex.substr(i, 2), 16)); } return str; } pkcs1pad2(s, n) { if (n < s.length + 11) { return null; } var ba = []; var i = s.length - 1; while (i >= 0 && n > 0) { ba[--n] = s.charCodeAt(i--); } ba[--n] = 0; while (n > 2) { ba[--n] = 0xff; } ba[--n] = 2; ba[--n] = 0; var c = this.a2hex(ba); return bigInt(c, 16); } pkcs1unpad2(a) { var b = a.toString(16); if (b.length % 2 !== 0) { b = "0" + b; } var c = this.hex2a(b); var i = 1; while (c.charCodeAt(i) !== 0) { i++; } return c.slice(i + 1); } encrypt(text) { var m = this.pkcs1pad2(text, 0x80); var c = m.modPow(this.e, this.n); var h = c.toString(16); while (h.length < 0x80 * 2) { h = "0" + h; } return h; } decrypt(text) { var ba = []; var i = 0; while (i < text.length) { ba[i] = text.charCodeAt(i); i += 1; } var a = bigInt(this.a2hex(ba), 16); var c = a.modPow(this.e, this.n); var d = this.pkcs1unpad2(c); return d; } })(); }
