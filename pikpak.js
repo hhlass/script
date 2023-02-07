@@ -43,9 +43,9 @@ var myResponse = {
 
         items = []
         let try_count = 0
-        while (try_count<5 && len(items) == 0){
+        while (try_count<5 && items.length == 0){
           tmp = await http(req, 'get');
-          if (tmp != null  && tmp.files != null){
+          if (tmp != null  && tmp.files != null && tmp.files.length != 0){
             items = tmp.files
           }else{
             req.headers.authorization = await signin()
