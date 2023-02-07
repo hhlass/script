@@ -49,6 +49,7 @@ var myResponse = {
             items = tmp.files
           }else{
             req.headers.authorization = await signin()
+            try_count += 1
           }
         }
 				// for (var items; !items;) {
